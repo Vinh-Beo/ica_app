@@ -1,0 +1,13 @@
+{
+  "@@locale": "vi",
+  "app_name": "iCa",
+  "login":"Đăng nhập",
+  "logout": "Đăng xuất",
+  "password": "Mật khẩu",
+  "register": "Đăng ký",
+  "error": "Lỗi",
+  "please_try_again": "Vui lòng thử lại",
+  "welcome": "Xin chào",
+  "forgot_password": "Quên mật khẩu",
+  "remember": "Ghi nhớ"
+}

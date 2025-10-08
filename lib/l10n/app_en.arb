@@ -1,0 +1,13 @@
+{
+  "@@locale": "en",
+  "app_name": "iCa",
+  "login":"Login",
+  "logout": "Log out",
+  "password": "Password",
+  "register": "Register",
+  "error": "Error",
+  "please_try_again": "Please try again",
+  "welcome": "Welcome",
+  "forgot_password": "Forgot Password",
+  "remember": "Remember"
+}
