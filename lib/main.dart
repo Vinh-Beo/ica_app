@@ -1,10 +1,7 @@
 import 'package:device_preview/device_preview.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:ica_app/l10n/l10n.dart';
 import 'package:ica_app/src/cores/animations/page_transition.dart';
 import 'package:ica_app/src/cores/themes/app_theme.dart';

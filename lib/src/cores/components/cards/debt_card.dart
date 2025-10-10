@@ -24,7 +24,37 @@ Widget debtCard({
                 const SizedBox(width: 12),
                 WText(text: cusName),
                 const SizedBox(width: 12),
-                WText(text: debt_total)
+                //WText(text: debt_total)
+                // Product Image
+                Container(
+                  
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(2),
+                    child: Image.asset(
+                      'assets/coffee.png',
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                          child: const Icon(
+                            Icons.image,
+                            size: 12,
+                            color: Colors.grey,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
             ],),
             const SizedBox(height: 8),
            WText(text: content)],));

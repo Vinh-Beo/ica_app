@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ica_app/l10n/l10n.dart';
 import 'package:ica_app/src/cores/components/bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:ica_app/src/cores/components/texts/w_normal_text.dart';
+import 'package:ica_app/src/cores/components/texts/w_title_text.dart';
 import 'package:ica_app/src/cores/themes/app_colors.dart';
 import 'package:ica_app/src/screens/login/auth/auth_bloc.dart';
 import 'package:ica_app/src/screens/login/auth/auth_event.dart';
@@ -105,14 +107,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                                   : [],
                             ),
                             child: Center(
-                              child: Text(
-                                context.l10n!.login,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: isLoginTab ? Colors.black : Colors.grey,
-                                ),
-                              ),
+                              child: WNormalText(text: context.l10n!.login,color: isLoginTab ? Colors.black : Colors.grey)
                             ),
                           ),
                         ),
@@ -131,23 +126,16 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                               borderRadius: BorderRadius.circular(30),
                               boxShadow: !isLoginTab
                                   ? [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
+                                      const BoxShadow(
+                                        color: AppColors.colorPurple,
                                         blurRadius: 10,
-                                        offset: const Offset(0, 2),
+                                        offset: Offset(0, 2),
                                       ),
                                     ]
                                   : [],
                             ),
                             child: Center(
-                              child: Text(
-                                context.l10n!.register,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: !isLoginTab ? Colors.black : Colors.grey,
-                                ),
-                              ),
+                              child: WNormalText(text: context.l10n!.register, color: !isLoginTab ? Colors.black : Colors.grey),
                             ),
                           ),
                         ),
@@ -282,6 +270,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                           width: 24,
                           height: 24,
                           child: Checkbox(
+                            activeColor: AppColors.colorPurple,
                             value: rememberMe,
                             onChanged: (value) {
                               setState(() {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ica_app/src/cores/components/cards/order_card.dart';
+import 'package:ica_app/src/cores/components/texts/w_normal_text.dart';
+import 'package:ica_app/src/cores/components/texts/w_title_text.dart';
 import 'package:ica_app/src/cores/themes/app_colors.dart';
 import 'package:ica_app/src/models/order_model.dart';
 import 'package:intl/intl.dart';
@@ -81,39 +83,7 @@ class _OrderScreenState extends State<OrderScreen> {
                   
                   
                   
-                  // Profile avatar
-                  Stack(
-                    children: [
-                      const CircleAvatar(
-                        radius: 20,
-                        backgroundColor: Color(0xFFE8B4F5),
-                        child: Text(
-                          'K',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        right: 0,
-                        bottom: 0,
-                        child: Container(
-                          width: 16,
-                          height: 16,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                          ),
-                          child: const Icon(
-                            Icons.catching_pokemon,
-                            size: 12,
-                            color: Colors.blue,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  
                 ],
               ),
             ),
@@ -136,13 +106,7 @@ class _OrderScreenState extends State<OrderScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            Text(
-              DateFormat('EEE d MMM yyyy').format(DateTime.now()),
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            WTitleText(text: DateFormat('EEE d MMM yyyy').format(DateTime.now()),color: AppColors.infoTextColor),
             // Month label
             // Padding(
             //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -191,22 +155,15 @@ class _OrderScreenState extends State<OrderScreen> {
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: isWeekly
                                 ? [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
+                                    const BoxShadow(
+                                      color: AppColors.colorPurple,
                                       blurRadius: 8,
-                                      offset: const Offset(0, 2),
+                                      offset: Offset(0, 2),
                                     )
                                   ]
                                 : [],
                           ),
-                          child: Text(
-                            'Not delivered',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: isWeekly ? Colors.black : Colors.grey,
-                            ),
-                          ),
+                          child: const WNormalText(text: 'Not delivered',color:AppColors.colorLightPrimary),
                         ),
                       ),
                       GestureDetector(
@@ -220,23 +177,16 @@ class _OrderScreenState extends State<OrderScreen> {
                             color: !isWeekly ? Colors.white : Colors.transparent,
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: !isWeekly
-                                ? [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
-                                    )
-                                  ]
-                                : [],
+                            ? [
+                                const BoxShadow(
+                                  color:AppColors.colorPurple,
+                                  blurRadius: 8,
+                                  offset: Offset(0, 2),
+                                )
+                              ]
+                            : [],
                           ),
-                          child: Text(
-                            'Completed',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: !isWeekly ? Colors.black : Colors.grey,
-                            ),
-                          ),
+                          child: const WNormalText(text:'Completed',color: AppColors.colorLightPrimary),
                         ),
                       ),
                     ],
@@ -329,13 +279,7 @@ class _OrderScreenState extends State<OrderScreen> {
   Widget _buildDayColumn(String day, String date, bool isSelected, bool hasEvent) {
     return Column(
       children: [
-        Text(
-          day,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey.shade600,
-          ),
-        ),
+        WNormalText(text: day, color: AppColors.colorIconLight),
         const SizedBox(height: 8),
         Container(
           width: 50,

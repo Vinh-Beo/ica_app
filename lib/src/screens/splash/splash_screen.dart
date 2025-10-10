@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ica_app/l10n/l10n.dart';
+import 'package:ica_app/src/cores/components/texts/w_title_text.dart';
+import 'package:ica_app/src/cores/themes/app_colors.dart';
 import 'dart:async';
 
 import 'package:ica_app/src/screens/login/login_register_screen.dart';
@@ -99,14 +101,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   ),
                 ),
                 const SizedBox(height: 10),
-                Text(
-                  context.l10n!.welcome,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.white70,
-                    letterSpacing: 0.5,
-                  ),
-                ),
+                WTitleText(text: context.l10n!.welcome,color: AppColors.colorLightPrimary),
               ],
             ),
           ),
@@ -115,3 +110,4 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     );
   }
 }
+

@@ -281,6 +281,8 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:ica_app/src/cores/components/app_bar/p_app_bar.dart';
 import 'package:ica_app/src/cores/components/buttons/w_button_inkwell.dart';
 import 'package:ica_app/src/cores/themes/app_colors.dart';
 
@@ -358,37 +360,49 @@ class _MyCartScreenState extends State<MyCartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE8F5E9),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFE8F5E9),
-        elevation: 0,
-        leading: Container(
-          margin: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
+      // appBar: AppBar(
+      //   elevation: 0,
+      //   leading: Container(
+      //     margin: const EdgeInsets.all(8),
+      //     decoration: BoxDecoration(
+      //       color: Colors.white,
+      //       shape: BoxShape.circle,
+      //       boxShadow: [
+      //         BoxShadow(
+      //           color: Colors.black.withOpacity(0.1),
+      //           blurRadius: 8,
+      //           offset: const Offset(0, 2),
+      //         ),
+      //       ],
+      //     ),
+      //     child: IconButton(
+      //       icon: const Icon(Icons.arrow_back, color: Colors.black, size: 20),
+      //       onPressed: () {},
+      //     ),
+      //   ),
+      //   title: const Text(
+      //     'My Cart',
+      //     style: TextStyle(
+      //       color: Colors.black,
+      //       fontSize: 20,
+      //       fontWeight: FontWeight.w600,
+      //     ),
+      //   ),
+      //   centerTitle: true,
+      // ),
+      appBar: PCustomizeAppBar(
+        isShowLeadingButton: false,
+        title: "Tên khách hàng",
+        rightWidget: PCustomizeAppBar.buildRightWidget(
+        SvgPicture.asset(
+          'assets/images/ic_plus_add.svg',
+          height: 24,
+          width: 24,
           ),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black, size: 20),
-            onPressed: () {},
-          ),
+          onTap: () async {
+            Navigator.pop(context, true);
+          },
         ),
-        title: const Text(
-          'My Cart',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
       ),
       body: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
