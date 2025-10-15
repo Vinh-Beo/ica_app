@@ -244,14 +244,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    final avatarPlayDuration = 500.ms;
-    final avatarWaitingDuration = 400.ms;
-    final nameDelayDuration = avatarWaitingDuration + avatarWaitingDuration + 200.ms;
-    final namePlayDuration = 800.ms;
-    final categoryListPlayDuration = 750.ms;
-    final categoryListDelayDuration = nameDelayDuration + namePlayDuration - 400.ms;
-    final selectedCategoryPlayDuration = 400.ms;
-    final selectedCategoryDelayDuration = categoryListDelayDuration + categoryListPlayDuration;
+    // final avatarPlayDuration = 500.ms;
+    // final avatarWaitingDuration = 400.ms;
+    // final nameDelayDuration = avatarWaitingDuration + avatarWaitingDuration + 200.ms;
+    // final namePlayDuration = 800.ms;
+    // final categoryListPlayDuration = 750.ms;
+    // final categoryListDelayDuration = nameDelayDuration + namePlayDuration - 400.ms;
+    // final selectedCategoryPlayDuration = 400.ms;
+    // final selectedCategoryDelayDuration = categoryListDelayDuration + categoryListPlayDuration;
 
 
     // final List<CartItem> _cartItems = [
@@ -330,49 +330,49 @@ class _HomeScreenState extends State<HomeScreen> {
     //   cartWidgets.add(const SizedBox(height: 10)); // Spacer between items
     // }
 
-    final List<CartItem> cartItems = [
-    CartItem(
-      name: 'Almonds',
-      price: 150.000,
-      weight: 10.00,
-      quantity: 2,
-      imageUrl: 'assets/almonds.png',
-    ),
-    CartItem(
-      name: 'Mix dry\nfruits',
-      price: 90.000,
-      weight: 10.00,
-      quantity: 2,
-      imageUrl: 'assets/mix_dry_fruits.png',
-    ),
-    CartItem(
-      name: 'Coffee',
-      price: 100.000,
-      weight: 10.00,
-      quantity: 2,
-      imageUrl: 'assets/coffee.png',
-    ),
-  ];
+  //   final List<CartItem> cartItems = [
+  //   CartItem(
+  //     name: 'Almonds',
+  //     price: 150.000,
+  //     weight: 10.00,
+  //     quantity: 2,
+  //     imageUrl: 'assets/almonds.png',
+  //   ),
+  //   CartItem(
+  //     name: 'Mix dry\nfruits',
+  //     price: 90.000,
+  //     weight: 10.00,
+  //     quantity: 2,
+  //     imageUrl: 'assets/mix_dry_fruits.png',
+  //   ),
+  //   CartItem(
+  //     name: 'Coffee',
+  //     price: 100.000,
+  //     weight: 10.00,
+  //     quantity: 2,
+  //     imageUrl: 'assets/coffee.png',
+  //   ),
+  // ];
 
-    void _incrementQuantity(int index) {
-    setState(() {
-      cartItems[index].quantity++;
-    });
-  }
+  //   void _incrementQuantity(int index) {
+  //   setState(() {
+  //     cartItems[index].quantity++;
+  //   });
+  // }
 
-  void _decrementQuantity(int index) {
-    setState(() {
-      if (cartItems[index].quantity > 1) {
-        cartItems[index].quantity--;
-      }
-    });
-  }
+  // void _decrementQuantity(int index) {
+  //   setState(() {
+  //     if (cartItems[index].quantity > 1) {
+  //       cartItems[index].quantity--;
+  //     }
+  //   });
+  // }
 
-  void _removeItem(int index) {
-    setState(() {
-      cartItems.removeAt(index);
-    });
-  }
+  // void _removeItem(int index) {
+  //   setState(() {
+  //     cartItems.removeAt(index);
+  //   });
+  // }
 
     return Scaffold(
       appBar: AppBar(
@@ -417,32 +417,34 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Stack(
         children: [
-          Positioned.fill(  // Thêm cái này
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              itemCount: cartItems.length,
-              itemBuilder: (context, index) {
-                return CartItemCard(
-                  item: cartItems[index],
-                  onIncrement: () => _incrementQuantity(index),
-                  onDecrement: () => _decrementQuantity(index),
-                  onRemove: () => _removeItem(index),
-                );
-              },
-            ),
+          Positioned.fill(  
+            child: Container(),
+            // Thêm cái này
+            // child: ListView.builder(
+            //   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            //   itemCount: cartItems.length,
+            //   itemBuilder: (context, index) {
+            //     return CartItemCard(
+            //       item: cartItems[index],
+            //       onIncrement: () => _incrementQuantity(index),
+            //       onDecrement: () => _decrementQuantity(index),
+            //       onRemove: () => _removeItem(index),
+            //     );
+            //   },
+            // ),
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 80,
-            child: SizedBox(
-              height: 80,
-              child: AnimatedCategoryList(
-                  categoryListPlayDuration: categoryListPlayDuration,
-                  categoryListDelayDuration: categoryListDelayDuration,
-                ),
-            ),
-          ),
+          // Positioned(
+          //   left: 0,
+          //   right: 0,
+          //   bottom: 80,
+          //   child: SizedBox(
+          //     height: 80,
+          //     child: AnimatedCategoryList(
+          //         categoryListPlayDuration: categoryListPlayDuration,
+          //         categoryListDelayDuration: categoryListDelayDuration,
+          //       ),
+          //   ),
+          // ),
         ],
       ),
       bottomSheet: Container(

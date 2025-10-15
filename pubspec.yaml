@@ -47,6 +47,10 @@ dependencies:
     sdk: flutter
   dio: ^5.9.0
   pretty_dio_logger: ^1.4.0
+  firebase_auth: ^5.2.0
+  firebase_core: ^3.4.0
+  cloud_firestore: ^5.4.0
+  http: ^1.2.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -165,7 +165,7 @@ class _PCustomizeAppBarState extends State<PCustomizeAppBar> {
               decoration: const BoxDecoration(
               gradient: AppGradient.gradientPrimary,
             )),
-      backgroundColor: widget.colorBackground,
+      backgroundColor: AppColors.colorLightBackground,
       elevation: 0,
       leading: !widget.isShowLeadingButton
           ? Container()

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ica_app/src/cores/components/app_bar/p_app_bar.dart';
 import 'package:ica_app/src/cores/components/cards/debt_card.dart';
+import 'package:ica_app/src/cores/themes/app_colors.dart';
 import 'package:intl/intl.dart';
 
 
@@ -28,6 +29,7 @@ class _DebtScreenState extends State<DebtScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.colorLightBackground,
       appBar: PCustomizeAppBar(
         isShowLeadingButton: false,
         title: "Tên khách hàng",

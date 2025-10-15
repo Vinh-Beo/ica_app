@@ -25,15 +25,15 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
   bool rememberMe = false;
   bool obscurePassword = true;
   bool isLoading = false;
-  final emailController = TextEditingController();
+  final nameController = TextEditingController();
   final passwordController = TextEditingController();
   
 
   @override
   void initState() {
     super.initState();
-    emailController.text = 'micahmad@potarastudio.com';
-    passwordController.text = 'mic4hmad#';
+    nameController.text = '';
+    passwordController.text = '';
     // Listen to auth state changes
     _authBloc.state.listen((state) {
       if (state is AuthSuccess) {
@@ -57,7 +57,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
   void _handleLogin() {
     _authBloc.eventSink.add(
       LoginRequested(
-        emailController.text,
+        nameController.text,
         passwordController.text,
       ),
     );
@@ -94,7 +94,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 300),
                             decoration: BoxDecoration(
-                              color: isLoginTab ? Colors.white : Colors.transparent,
+                              color: isLoginTab ? AppColors.colorPurple : Colors.transparent,
                               borderRadius: BorderRadius.circular(30),
                               boxShadow: isLoginTab
                                   ? [
@@ -107,7 +107,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                                   : [],
                             ),
                             child: Center(
-                              child: WNormalText(text: context.l10n!.login,color: isLoginTab ? Colors.black : Colors.grey)
+                              child: WNormalText(text: context.l10n!.login,color: isLoginTab ? AppColors.colorWhite : AppColors.colorIconLight)
                             ),
                           ),
                         ),
@@ -122,12 +122,12 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 300),
                             decoration: BoxDecoration(
-                              color: !isLoginTab ? Colors.white : Colors.transparent,
+                              color: !isLoginTab ? AppColors.colorPurple : Colors.transparent,
                               borderRadius: BorderRadius.circular(30),
                               boxShadow: !isLoginTab
                                   ? [
                                       const BoxShadow(
-                                        color: AppColors.colorPurple,
+                                        color: AppColors.colorWhite,
                                         blurRadius: 10,
                                         offset: Offset(0, 2),
                                       ),
@@ -135,7 +135,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                                   : [],
                             ),
                             child: Center(
-                              child: WNormalText(text: context.l10n!.register, color: !isLoginTab ? Colors.black : Colors.grey),
+                              child: WNormalText(text: context.l10n!.register, color: !isLoginTab ? AppColors.colorWhite : AppColors.colorIconLight),
                             ),
                           ),
                         ),
@@ -166,14 +166,14 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.email_outlined, color: Colors.grey.shade600),
+                      Icon(Icons.person_outline, color: Colors.grey.shade600),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Email Address',
+                              'Name',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey.shade600,
@@ -181,7 +181,7 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                             ),
                             const SizedBox(height: 4),
                             TextField(
-                              controller: emailController,
+                              controller: nameController,
                               decoration: const InputDecoration(
                                 border: InputBorder.none,
                                 isDense: true,
@@ -341,38 +341,9 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
     );
   }
 
-  Widget _buildSocialButton(String name, IconData icon, Color color, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade300),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 24, color: color),
-            const SizedBox(width: 8),
-            Text(
-              name,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   void dispose() {
-    emailController.dispose();
+    nameController.dispose();
     passwordController.dispose();
     super.dispose();
   }

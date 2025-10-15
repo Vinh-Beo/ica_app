@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ica_app/src/cores/themes/app_colors.dart';
+import 'package:ica_app/src/screens/login/login_register_screen.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({Key? key, required this.title}) : super(key: key);
@@ -232,7 +233,10 @@ class _SettingScreenState extends State<SettingScreen> {
               const SizedBox(height: 24),
               // Login Button
               ElevatedButton(
-                onPressed: isLoading ? null : () {},
+                onPressed: isLoading ? null : () 
+                {
+                  _performLogout(context);
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.colorPurple,
                   foregroundColor: Colors.white,
@@ -325,5 +329,30 @@ class _SettingScreenState extends State<SettingScreen> {
         size: 28,
       ),
     );
+  }
+
+  void _performLogout(BuildContext context) async {
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    // Simulate logout API call
+    await Future.delayed(const Duration(seconds: 1));
+
+    if (context.mounted) {
+      // Remove loading dialog
+      Navigator.of(context).pop();
+
+      // Navigate to login page and clear navigation stack
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginRegisterScreen()),
+        (route) => false,
+      );
+    }
   }
 }

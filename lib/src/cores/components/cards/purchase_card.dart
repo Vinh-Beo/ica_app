@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ica_app/src/cores/components/icons/w_icon.dart';
-import 'package:ica_app/src/cores/components/icons/w_text_icon.dart';
 import 'package:ica_app/src/cores/components/texts/w_text.dart';
 
 Widget debtCard({
@@ -11,8 +10,6 @@ Widget debtCard({
     required String content,
     required String icon,
     required Color color,
-    required String delivery_time,
-    required String debt_total,
     bool isSecondary = false,
   }) {
     return Container(padding: const EdgeInsets.all(16),

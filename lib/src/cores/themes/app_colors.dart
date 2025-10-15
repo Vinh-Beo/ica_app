@@ -45,7 +45,7 @@ class AppColors {
   static const Color colorLightSecondary = Color(0xFFF9F6E5);
   static const Color colorLightCardColors = Color(0xFFFFFFFF);
   static const Color colorLightText = Color(0xFF2B2B2B);
-  static const Color colorLightBackground = colorLightPrimary;
+  static const Color colorLightBackground = Color(0xFFF5F5F0);
   static const Color colorLightBackground1 = Color(0xFFF9F9F9);
 
   // #Light Color

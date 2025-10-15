@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:ica_app/src/screens/login/auth/auth_event.dart';
 import 'package:ica_app/src/screens/login/auth/auth_state.dart';
+import 'package:ica_app/src/services/firebase-services.dart';
 
 class AuthBloc {
   final _stateController = StreamController<AuthState>.broadcast();
@@ -21,13 +22,28 @@ class AuthBloc {
       _updateState(AuthLoading());
 
       // Simulate API call
+      final authService = FirebaseService();
+
+      // final data = {
+      //   'Id':'VinhBeo',
+      //   'Password':'123456',
+      //   'Name':'Vinh Beo',
+      //   'Role':'Admin',
+      //   'Address':'108 Xô Viết Nghệ Tĩnh',
+      //   'Phone':'0901643664',
+      //   'IsActive':true,
+      //   'CreatedTime': DateTime.now().toIso8601String(),
+      //   'UpdateTime': DateTime.now().toIso8601String(),
+      // };
+      bool isLogin = await authService.login(event.userName,event.password);
+      
       await Future.delayed(const Duration(seconds: 1));
 
       // Simple validation
-      if (event.email.isNotEmpty && event.password.isNotEmpty) {
-        _updateState(AuthSuccess(event.email));
+      if (isLogin) {
+        _updateState(AuthSuccess(event.userName));
       } else {
-        _updateState(AuthFailure('Invalid email or password'));
+        _updateState(AuthFailure('Invalid userName or password'));
       }
     } else if (event is LogoutRequested) {
       _updateState(AuthInitial());

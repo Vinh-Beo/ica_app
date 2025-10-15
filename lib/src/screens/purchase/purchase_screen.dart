@@ -281,10 +281,13 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ica_app/src/cores/components/app_bar/p_app_bar.dart';
 import 'package:ica_app/src/cores/components/buttons/w_button_inkwell.dart';
+import 'package:ica_app/src/cores/components/buttons/w_round_button.dart';
 import 'package:ica_app/src/cores/themes/app_colors.dart';
+import 'package:ica_app/src/recipes/presentation/widgets/home_screens/animated_category_list.dart';
 
 
 class PurchaseScreen extends StatelessWidget {
@@ -293,13 +296,9 @@ class PurchaseScreen extends StatelessWidget {
   final String title;
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'My Cart',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        scaffoldBackgroundColor: const Color(0xFFE8F5E9),
-      ),
-      home: const MyCartScreen(),
+      home: MyCartScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -326,14 +325,14 @@ class _MyCartScreenState extends State<MyCartScreen> {
       price: 90.000,
       weight: 10.00,
       quantity: 2,
-      imageUrl: 'assets/mix_dry_fruits.png',
+      imageUrl: '',
     ),
     CartItem(
       name: 'Coffee',
       price: 100.000,
       weight: 10.00,
       quantity: 2,
-      imageUrl: 'assets/coffee.png',
+      imageUrl: '',
     ),
   ];
 
@@ -360,36 +359,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   elevation: 0,
-      //   leading: Container(
-      //     margin: const EdgeInsets.all(8),
-      //     decoration: BoxDecoration(
-      //       color: Colors.white,
-      //       shape: BoxShape.circle,
-      //       boxShadow: [
-      //         BoxShadow(
-      //           color: Colors.black.withOpacity(0.1),
-      //           blurRadius: 8,
-      //           offset: const Offset(0, 2),
-      //         ),
-      //       ],
-      //     ),
-      //     child: IconButton(
-      //       icon: const Icon(Icons.arrow_back, color: Colors.black, size: 20),
-      //       onPressed: () {},
-      //     ),
-      //   ),
-      //   title: const Text(
-      //     'My Cart',
-      //     style: TextStyle(
-      //       color: Colors.black,
-      //       fontSize: 20,
-      //       fontWeight: FontWeight.w600,
-      //     ),
-      //   ),
-      //   centerTitle: true,
-      // ),
+      backgroundColor: AppColors.colorLightBackground,
       appBar: PCustomizeAppBar(
         isShowLeadingButton: false,
         title: "Tên khách hàng",
@@ -404,51 +374,77 @@ class _MyCartScreenState extends State<MyCartScreen> {
           },
         ),
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        itemCount: cartItems.length,
-        itemBuilder: (context, index) {
-          return CartItemCard(
-            item: cartItems[index],
-            onIncrement: () => _incrementQuantity(index),
-            onDecrement: () => _decrementQuantity(index),
-            onRemove: () => _removeItem(index),
-          );
-        },
+      body: Expanded(
+          child: ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          itemCount: cartItems.length,
+          itemBuilder: (context, index) {
+            return CartItemCard(
+              item: cartItems[index],
+              onIncrement: () => _incrementQuantity(index),
+              onDecrement: () => _decrementQuantity(index),
+              onRemove: () => _removeItem(index),
+            );
+          },
+        ),
       ),
-      bottomSheet: Container(
+        bottomSheet: Container(
+        color: AppColors.colorLightBackground,
         padding: const EdgeInsets.all(16.0),
-        color: Colors.white,
-        child: Column(
+        child:  Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            const Positioned(
+              left: 0,
+              right: 0,
+              bottom: 80,
+              child:  SizedBox(
+                height: 80,
+                child: AnimatedCategoryList(
+                    categoryListPlayDuration: Duration(milliseconds: 200),
+                    categoryListDelayDuration: Duration(milliseconds: 200),
+                  ),
+              ),
+            ),
             Container(
+              height: 100,
               decoration: BoxDecoration(
-                color: Colors.cyan,
+                color: AppColors.colorWhite,
                 borderRadius: BorderRadius.circular(30),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child:  const Row(
-                children: [
-                   Icon(Icons.add_rounded, color: Colors.white, size: 24),
-                   SizedBox(width: 8),
-                   Expanded(
+              child:   Column(children: [
+                const SizedBox(height: 20),
+                const Expanded(
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8.0),
                       child: TextField(
                         decoration: InputDecoration(
-                          hintText: 'Ask Gemini',
                           border: InputBorder.none,
-                          hintStyle: TextStyle(color: Colors.white54),
+                          isDense: true,
+                          hintText: 'Tell me',
+                          hintStyle: TextStyle(color: AppColors.colorLightText),
+                          contentPadding: EdgeInsets.zero,
                         ),
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                          ),
                       ),
                     ),
                   ),
-                  SizedBox(width: 8),
-                  Icon(Icons.send, color: AppColors.colorPurple, size: 24),
-                ],
+                  const SizedBox(height: 4),
+                  Row(
+                  children: [
+                    WRoundButton(color: AppColors.colorTextSliver,name: '           kg'),
+                    const SizedBox(width: 4),
+                    WRoundButton(color: AppColors.colorTextSliver,name: '            đ'),
+                    const Expanded(child: SizedBox()),
+                    const Icon(Icons.send, color: AppColors.colorPurple, size: 24),
+                  ],
               ),
+              SizedBox(height: 8),],
+              )
             ),
           ],
         ),
