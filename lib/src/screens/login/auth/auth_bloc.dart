@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:ica_app/src/screens/login/auth/auth_event.dart';
 import 'package:ica_app/src/screens/login/auth/auth_state.dart';
 import 'package:ica_app/src/services/firebase-services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthBloc {
   final _stateController = StreamController<AuthState>.broadcast();
@@ -23,24 +24,19 @@ class AuthBloc {
 
       // Simulate API call
       final authService = FirebaseService();
-
-      // final data = {
-      //   'Id':'VinhBeo',
-      //   'Password':'123456',
-      //   'Name':'Vinh Beo',
-      //   'Role':'Admin',
-      //   'Address':'108 Xô Viết Nghệ Tĩnh',
-      //   'Phone':'0901643664',
-      //   'IsActive':true,
-      //   'CreatedTime': DateTime.now().toIso8601String(),
-      //   'UpdateTime': DateTime.now().toIso8601String(),
-      // };
       bool isLogin = await authService.login(event.userName,event.password);
       
       await Future.delayed(const Duration(seconds: 1));
 
       // Simple validation
       if (isLogin) {
+          // Save login state
+          final prefs = await SharedPreferences.getInstance();
+          if (event.isRemember) {
+            await prefs.setBool('isRemember', event.isRemember);
+            await prefs.setString('userName', event.userName);
+            await prefs.setString('password', event.password);
+          }
         _updateState(AuthSuccess(event.userName));
       } else {
         _updateState(AuthFailure('Invalid userName or password'));

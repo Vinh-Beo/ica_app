@@ -10,6 +10,7 @@ import 'package:ica_app/src/cores/themes/app_colors.dart';
 import 'package:ica_app/src/screens/login/auth/auth_bloc.dart';
 import 'package:ica_app/src/screens/login/auth/auth_event.dart';
 import 'package:ica_app/src/screens/login/auth/auth_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginRegisterScreen extends StatefulWidget {
   const LoginRegisterScreen({Key? key}) : super(key: key);
@@ -22,18 +23,18 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
 
   final AuthBloc _authBloc = AuthBloc();
   bool isLoginTab = true;
-  bool rememberMe = false;
+  bool isRemember = false;
   bool obscurePassword = true;
   bool isLoading = false;
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
   
+  
 
   @override
   void initState() {
     super.initState();
-    nameController.text = '';
-    passwordController.text = '';
+    checkLoginStatus();
     // Listen to auth state changes
     _authBloc.state.listen((state) {
       if (state is AuthSuccess) {
@@ -54,11 +55,19 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
     });
   }
 
+  Future<void> checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    isRemember = prefs.getBool('isRemember') ?? false;
+    nameController.text = prefs.getString('userName') ?? '';
+    passwordController.text = prefs.getString('password') ?? '';
+  }
+
   void _handleLogin() {
     _authBloc.eventSink.add(
       LoginRequested(
         nameController.text,
         passwordController.text,
+        isRemember
       ),
     );
   }
@@ -271,10 +280,10 @@ class _LoginRegisterScreenState extends State<LoginRegisterScreen> {
                           height: 24,
                           child: Checkbox(
                             activeColor: AppColors.colorPurple,
-                            value: rememberMe,
+                            value: isRemember,
                             onChanged: (value) {
                               setState(() {
-                                rememberMe = value ?? false;
+                                isRemember = value ?? false;
                               });
                             },
                             shape: RoundedRectangleBorder(
