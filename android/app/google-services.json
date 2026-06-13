@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "705843360963",
+    "project_id": "my-ica-3101",
+    "storage_bucket": "my-ica-3101.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:705843360963:android:f007d39bde8331dd8a5e76",
+        "android_client_info": {
+          "package_name": "com.example.ica_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "705843360963-6gt1lmmvje8oh37t6qbgqq6uidfndnbl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7RCCT0WYwJAls44_-A1soRxhm_pGAfOY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "705843360963-6gt1lmmvje8oh37t6qbgqq6uidfndnbl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "705843360963-p70qu8i63qjekls2kmub1jp3pve1gg3e.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.icaApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,36 @@
+{
+  "storage": {
+    "bucket": "my-ica-3101.firebasestorage.app",
+    "rules": "storage.rules"
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": ["node_modules", ".git", "firebase-debug.log"]
+    }
+  ],
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "my-ica-3101",
+          "appId": "1:705843360963:android:f007d39bde8331dd8a5e76",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "my-ica-3101",
+          "configurations": {
+            "android": "1:705843360963:android:f007d39bde8331dd8a5e76",
+            "ios": "1:705843360963:ios:d5bde8c921f873e48a5e76",
+            "macos": "1:705843360963:ios:d5bde8c921f873e48a5e76",
+            "web": "1:705843360963:web:ff6cc99f76a675d48a5e76",
+            "windows": "1:705843360963:web:8ad352687faf2a7c8a5e76"
+          }
+        }
+      }
+    }
+  }
+}
