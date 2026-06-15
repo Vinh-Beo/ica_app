@@ -231,7 +231,18 @@ class AppState extends ChangeNotifier {
     );
   }
 
-  void deleteDebt(String id) { _fb.deleteDebt(id); }
+  void deleteDebt(String id) {
+    final d = debts.firstWhere((x) => x.id == id,
+        orElse: () => DebtRecord(id: id, customerId: '', amount: 0, deliveryDate: '', createdDate: ''));
+    final cust = customers.firstWhere((c) => c.id == d.customerId,
+        orElse: () => Customer(id: '', name: '', type: '', coefficient: 1));
+    _fb.deleteDebt(id);
+    addNotification(
+      type: 'debt_deleted',
+      title: 'Đã xoá công nợ · ${cust.name}',
+      body: '${fmt(d.amount)}đ · Xoá bởi $currentUserName',
+    );
+  }
 
   // ── Inventory mutations → Firebase ───────────────────────────────────────────
   void addInventoryEntry(InventoryEntry e) { _fb.addInventoryEntry(e); }

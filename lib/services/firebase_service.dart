@@ -18,6 +18,7 @@
 //
 // Cách dùng: gọi FirebaseService.instance.<method>()
 
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -249,19 +250,18 @@ class FirebaseService {
     return q.docs.map((d) => DebtRecord.fromMap(d.id, d.data())).toList();
   }
 
-  /// Thêm công nợ. Nếu có ảnh -> upload Storage trước, rồi tạo doc Firestore 1 lần với imageUrl đã có.
+  /// Thêm công nợ. Ảnh lưu thẳng Firestore dưới dạng base64 — không cần Storage.
   Future<String> addDebt(DebtRecord debt, {Uint8List? imageBytes, String customerName = ''}) async {
     final data = debt.toMap();
     if (imageBytes != null) {
-      // Upload trước khi tạo doc — dùng debt.id làm path ổn định
-      data['imageUrl'] = await _uploadImage('debts/${debt.id}.jpg', imageBytes);
+      data['imageBase64'] = base64Encode(imageBytes);
     }
     await _col('debts').doc(debt.id).set(data);
-    await _notifyAllDevices(
+    _notifyAllDevices(
       title: customerName.isNotEmpty ? 'Công nợ mới · $customerName' : 'Công nợ mới',
       body: '${debt.amount.toStringAsFixed(0)}đ',
       tab: 'debt',
-    );
+    ).catchError((_) {});
     return debt.id;
   }
 
@@ -277,17 +277,17 @@ class FirebaseService {
       await _deleteImageSafe('debts/${debt.id}.jpg');
     }
     await _col('debts').doc(debt.id).update(data);
-    await _notifyAllDevices(
+    _notifyAllDevices(
       title: 'Cập nhật công nợ',
       body: '${debt.amount.toStringAsFixed(0)}đ',
-    );
+    ).catchError((_) {});
   }
 
   /// Thêm/đổi ảnh cho công nợ có sẵn
   Future<String> addImageToDebt(String debtId, Uint8List imageBytes) async {
     final url = await _uploadImage('debts/$debtId.jpg', imageBytes);
     await _col('debts').doc(debtId).update({'imageUrl': url});
-    await _notifyAllDevices(title: 'Cập nhật ảnh công nợ', body: '');
+    _notifyAllDevices(title: 'Cập nhật ảnh công nợ', body: '').catchError((_) {});
     return url;
   }
 
@@ -296,11 +296,11 @@ class FirebaseService {
       'isPaid': true,
       'paidDate': _todayStr(),
     });
-    await _notifyAllDevices(
+    _notifyAllDevices(
       title: customerName.isNotEmpty ? 'Đã thu tiền · $customerName' : 'Đã thu tiền',
       body: '${amount.toStringAsFixed(0)}đ',
       tab: 'debt',
-    );
+    ).catchError((_) {});
   }
 
   Future<void> deleteDebt(String debtId) async {

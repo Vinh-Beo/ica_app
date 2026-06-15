@@ -8,12 +8,12 @@ class PageHeader extends StatelessWidget {
   final VoidCallback onBack;
   final Widget? trailing;
 
-  PageHeader({super.key, required this.title, this.subtitle, required this.onBack, this.trailing});
+  const PageHeader({super.key, required this.title, this.subtitle, required this.onBack, this.trailing});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(12, 12, 16, 12),
+      padding: const EdgeInsets.fromLTRB(12, 12, 16, 12),
       decoration: BoxDecoration(color: context.p.surface, border: Border(bottom: BorderSide(color: context.p.border))),
       child: Row(children: [
         GestureDetector(
@@ -24,7 +24,7 @@ class PageHeader extends StatelessWidget {
             child: Center(child: Icon(Icons.chevron_left, color: context.p.textMain, size: 22)),
           ),
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         Expanded(child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -43,7 +43,7 @@ class PageHeader extends StatelessWidget {
 class WaveLogo extends StatelessWidget {
   final double size;
   final Color? color;
-  WaveLogo({super.key, this.size = 26, this.color});
+  const WaveLogo({super.key, this.size = 26, this.color});
 
   @override
   Widget build(BuildContext context) => SizedBox(
@@ -78,20 +78,20 @@ class _WavePainter extends CustomPainter {
 class OceanCheckBox extends StatelessWidget {
   final bool checked;
   final VoidCallback onTap;
-  OceanCheckBox({super.key, required this.checked, required this.onTap});
+  const OceanCheckBox({super.key, required this.checked, required this.onTap});
 
   @override
   Widget build(BuildContext context) => GestureDetector(
     onTap: onTap,
     child: AnimatedContainer(
-      duration: Duration(milliseconds: 150),
+      duration: const Duration(milliseconds: 150),
       width: 22, height: 22,
       decoration: BoxDecoration(
         color: checked ? context.p.teal : context.p.surface,
         borderRadius: BorderRadius.circular(7),
-        border: Border.all(color: checked ? context.p.teal : Color(0xFFCBD5E1), width: 2),
+        border: Border.all(color: checked ? context.p.teal : const Color(0xFFCBD5E1), width: 2),
       ),
-      child: checked ? Icon(Icons.check, color: Colors.white, size: 14) : null,
+      child: checked ? const Icon(Icons.check, color: Colors.white, size: 14) : null,
     ),
   );
 }
@@ -101,11 +101,11 @@ class PriceLevelBadge extends StatelessWidget {
   final String label;
   final Color color;
   final Color bg;
-  PriceLevelBadge({super.key, required this.label, required this.color, required this.bg});
+  const PriceLevelBadge({super.key, required this.label, required this.color, required this.bg});
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
     decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(14)),
     child: Text(label, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w800)),
   );
@@ -116,7 +116,7 @@ class StatBox extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
-  StatBox({super.key, required this.label, required this.value, required this.color});
+  const StatBox({super.key, required this.label, required this.value, required this.color});
 
   @override
   Widget build(BuildContext context) => Container(
@@ -124,7 +124,7 @@ class StatBox extends StatelessWidget {
     decoration: BoxDecoration(color: context.p.bg, borderRadius: BorderRadius.circular(12)),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(label, style: TextStyle(fontSize: 11, color: context.p.text2, fontWeight: FontWeight.w600)),
-      SizedBox(height: 3),
+      const SizedBox(height: 3),
       Text(value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: color)),
     ]),
   );
@@ -134,14 +134,14 @@ class StatBox extends StatelessWidget {
 class SectionCard extends StatelessWidget {
   final Widget child;
   final EdgeInsets? padding;
-  SectionCard({super.key, required this.child, this.padding});
+  const SectionCard({super.key, required this.child, this.padding});
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: padding ?? EdgeInsets.all(14),
+    padding: padding ?? const EdgeInsets.all(14),
     decoration: BoxDecoration(
       color: context.p.surface, borderRadius: BorderRadius.circular(16),
-      boxShadow: [BoxShadow(color: context.p.textMain.withOpacity(0.05), blurRadius: 4)],
+      boxShadow: [BoxShadow(color: context.p.textMain.withValues(alpha: 0.05), blurRadius: 4)],
     ),
     child: child,
   );
@@ -158,7 +158,7 @@ class OceanInput extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final Color? borderColor;
 
-  OceanInput({super.key, required this.hint, this.controller, this.keyboardType, this.obscureText = false, this.prefix, this.suffix, this.onChanged, this.borderColor});
+  const OceanInput({super.key, required this.hint, this.controller, this.keyboardType, this.obscureText = false, this.prefix, this.suffix, this.onChanged, this.borderColor});
 
   @override
   Widget build(BuildContext context) => Container(
@@ -168,7 +168,7 @@ class OceanInput extends StatelessWidget {
       border: Border.all(color: borderColor ?? context.p.border, width: 1.5),
     ),
     child: Row(children: [
-      if (prefix != null) ...[SizedBox(width: 12), prefix!],
+      if (prefix != null) ...[const SizedBox(width: 12), prefix!],
       Expanded(child: TextField(
         controller: controller,
         keyboardType: keyboardType,
@@ -177,12 +177,12 @@ class OceanInput extends StatelessWidget {
         style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: context.p.textMain),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: TextStyle(color: Color(0xFFCBD5E1)),
-          contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+          hintStyle: const TextStyle(color: Color(0xFFCBD5E1)),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
           border: InputBorder.none,
         ),
       )),
-      if (suffix != null) ...[suffix!, SizedBox(width: 8)],
+      if (suffix != null) ...[suffix!, const SizedBox(width: 8)],
     ]),
   );
 }
@@ -193,7 +193,7 @@ class GradientCard extends StatelessWidget {
   final Widget child;
   final double borderRadius;
 
-  GradientCard({super.key, required this.colors, required this.child, this.borderRadius = 16});
+  const GradientCard({super.key, required this.colors, required this.child, this.borderRadius = 16});
 
   @override
   Widget build(BuildContext context) => Container(
@@ -227,11 +227,11 @@ void showToast(BuildContext context, String msg, {bool isError = false}) {
 // ── Label ─────────────────────────────────────────────────────────────────────
 class FieldLabel extends StatelessWidget {
   final String text;
-  FieldLabel(this.text, {super.key});
+  const FieldLabel(this.text, {super.key});
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.only(bottom: 6),
+    padding: const EdgeInsets.only(bottom: 6),
     child: Text(text.toUpperCase(),
         style: TextStyle(fontSize: 10, color: context.p.textMuted, fontWeight: FontWeight.w800, letterSpacing: 0.6)),
   );
