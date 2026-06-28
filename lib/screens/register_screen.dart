@@ -103,7 +103,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       borderRadius: BorderRadius.circular(18),
                       border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
                     ),
-                    child: const Center(child: WaveLogo(size: 32, color: Colors.white)),
+                    child: const Center(child: FishLogo(size: 32, color: Colors.white)),
                   ),
                   const SizedBox(height: 10),
                   const Text('iCa',

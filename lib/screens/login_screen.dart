@@ -148,7 +148,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(color: Colors.white.withValues(alpha: 0.25), width: 1.5),
                     ),
-                    child: const Center(child: WaveLogo(size: 44, color: Colors.white)),
+                    child: const Center(child: FishLogo(size: 44, color: Colors.white)),
                   ),
                   const SizedBox(height: 18),
                   const Text('iCa',

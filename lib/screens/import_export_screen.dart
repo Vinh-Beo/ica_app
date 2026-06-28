@@ -69,7 +69,7 @@ class _ImportExportScreenState extends State<ImportExportScreen> {
     final s = AppStrings.of(context);
     if (state.seafood.isEmpty) {
       return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-        AppIcon(icon: Icons.set_meal_rounded, color: context.p.teal, size: 64, iconSize: 30), const SizedBox(height: 12),
+        const AppIcon(icon: Icons.set_meal_rounded, color: kPurple, size: 64, iconSize: 30), const SizedBox(height: 12),
         Text(s.noSf, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: context.p.textMain)),
         const SizedBox(height: 6), Text(s.noSfHint, style: TextStyle(fontSize: 12, color: context.p.textMuted)),
       ]));
@@ -79,7 +79,7 @@ class _ImportExportScreenState extends State<ImportExportScreen> {
       // header
       Container(color: context.p.bg, padding: const EdgeInsets.fromLTRB(16,12,16,0), child: Column(children: [
         Row(children: [
-          Expanded(child: _NXStat(s.totalIn, '${fmtK(nhapVal)}đ', '$allNhap ${s.invUnits}', [context.p.navy, context.p.teal])),
+          Expanded(child: _NXStat(s.totalIn, '${fmtK(nhapVal)}đ', '$allNhap ${s.invUnits}', const [kPurple, kPink])),
           const SizedBox(width: 10),
           Expanded(child: _NXStat(s.totalOut, '${fmtK(xuatVal)}đ', '$allXuat ${s.invUnits}', const [Color(0xFF15803D), Color(0xFF16A34A)])),
         ]),
@@ -91,7 +91,7 @@ class _ImportExportScreenState extends State<ImportExportScreen> {
           ])),
           const Spacer(),
           GestureDetector(onTap: () => setState(() => _showAdd = !_showAdd),
-            child: Container(padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8), decoration: BoxDecoration(color: _showAdd ? const Color(0xFFFEF2F2) : context.p.teal, borderRadius: BorderRadius.circular(20)),
+            child: Container(padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8), decoration: BoxDecoration(color: _showAdd ? const Color(0xFFFEF2F2) : null, gradient: _showAdd ? null : kGradPP, borderRadius: BorderRadius.circular(20)),
                 child: Text(_showAdd ? s.close : s.add, style: TextStyle(color: _showAdd ? const Color(0xFFDC2626) : Colors.white, fontSize: 12, fontWeight: FontWeight.w700)))),
         ]),
         const SizedBox(height: 10),
@@ -142,9 +142,9 @@ class _ImportExportScreenState extends State<ImportExportScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: context.p.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: context.p.teal, width: 1.5)),
+      decoration: BoxDecoration(color: context.p.surface, borderRadius: BorderRadius.circular(16), border: Border.all(color: kPurple, width: 1.5)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(s.newEntry, style: TextStyle(fontSize: 10, color: context.p.teal, fontWeight: FontWeight.w800, letterSpacing: 1)),
+        Text(s.newEntry, style: const TextStyle(fontSize: 10, color: kPurple, fontWeight: FontWeight.w800, letterSpacing: 1)),
         const SizedBox(height: 10),
         Row(children: [
           Expanded(child: _TypeBtn(s.typeIn, 'nhap', _type, () => setState(() => _type = 'nhap'))),
@@ -177,7 +177,7 @@ class _ImportExportScreenState extends State<ImportExportScreen> {
         const SizedBox(height: 12),
         Row(children: [
           Expanded(child: GestureDetector(onTap: () => _addEntry(state),
-            child: Container(height: 40, decoration: BoxDecoration(color: context.p.teal, borderRadius: BorderRadius.circular(20)),
+            child: Container(height: 40, decoration: BoxDecoration(gradient: kGradPP, borderRadius: BorderRadius.circular(20)),
                 child: Center(child: Text(s.addEntry, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 13)))))),
           const SizedBox(width: 8),
           GestureDetector(onTap: () => setState(() => _showAdd = false),
@@ -224,13 +224,13 @@ class _ImportExportScreenState extends State<ImportExportScreen> {
           ]),
           const SizedBox(height: 12),
           Row(children: [
-            Expanded(child: _InvStatBox(s.typeIn, nhap, sf.unit, context.p.teal, const Color(0xFFE0F7FA), state.inventoryEntries.where((e) => e.sfId == sf.id && e.type == 'nhap').length)),
+            Expanded(child: _InvStatBox(s.typeIn, nhap, sf.unit, kPurple, const Color(0xFFF3E8FF), state.inventoryEntries.where((e) => e.sfId == sf.id && e.type == 'nhap').length)),
             const SizedBox(width: 8),
             Expanded(child: _InvStatBox(xuat < 0 ? s.returns_ : s.typeOut, xuat, sf.unit, xuat < 0 ? const Color(0xFFB45309) : const Color(0xFF15803D), xuat < 0 ? const Color(0xFFFEF3C7) : const Color(0xFFDCFCE7), state.inventoryEntries.where((e) => e.sfId == sf.id && e.type == 'xuat').length)),
           ]),
           if (hasData) ...[
             const SizedBox(height: 10),
-            ClipRRect(borderRadius: BorderRadius.circular(6), child: LinearProgressIndicator(value: xuatPct, backgroundColor: context.p.surface2, color: context.p.teal, minHeight: 6)),
+            ClipRRect(borderRadius: BorderRadius.circular(6), child: LinearProgressIndicator(value: xuatPct, backgroundColor: context.p.surface2, color: kPurple, minHeight: 6)),
             const SizedBox(height: 4),
             Row(children: [
               Text('${s.alreadyOut} ${(xuatPct * 100).toStringAsFixed(0)}%', style: TextStyle(fontSize: 9, color: context.p.textMuted, fontWeight: FontWeight.w600)),
@@ -262,7 +262,7 @@ class _ImportExportScreenState extends State<ImportExportScreen> {
     final summaryCard = Container(
       margin: const EdgeInsets.only(top: 4, bottom: 6),
       padding: const EdgeInsets.all(13),
-      decoration: BoxDecoration(gradient: LinearGradient(colors: [context.p.navy, context.p.teal], begin: Alignment.topLeft, end: Alignment.bottomRight), borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(gradient: kGradPP, borderRadius: BorderRadius.circular(16)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text('${s.summaryHeaderTx}$periodLabel', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.white.withOpacity(0.85), letterSpacing: 0.5)),
         ...sfIds.map((id) {
@@ -290,7 +290,7 @@ class _ImportExportScreenState extends State<ImportExportScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(padding: const EdgeInsets.symmetric(vertical: 10), child: Row(children: [
-          Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3), decoration: BoxDecoration(color: const Color(0xFFDBEAFE), borderRadius: BorderRadius.circular(20)), child: Text(fmtDate(entry.key), style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: context.p.navy))),
+          Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3), decoration: BoxDecoration(color: const Color(0xFFF3E8FF), borderRadius: BorderRadius.circular(20)), child: Text(fmtDate(entry.key), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: kPurple))),
           const SizedBox(width: 8), Expanded(child: Divider(color: context.p.border)),
           const SizedBox(width: 8), Text('${entry.value.length} ${s.invoicesUnitTx}', style: TextStyle(fontSize: 10, color: context.p.textMuted, fontWeight: FontWeight.w600)),
         ])),
@@ -298,8 +298,8 @@ class _ImportExportScreenState extends State<ImportExportScreen> {
           final sf = state.seafood.firstWhere((s) => s.id == e.sfId, orElse: () => Seafood(id:'',name:AppStrings.readFrom(context).unknownSeafood,unit:'',icon:'🐡',category:'',basePrice:0));
           final isNhap  = e.type == 'nhap';
           final isReturn = e.type == 'xuat' && e.qty < 0;
-          final bgIcon  = isReturn ? const Color(0xFFFEF3C7) : isNhap ? const Color(0xFFE0F7FA) : const Color(0xFFDCFCE7);
-          final qtyColor = isReturn ? const Color(0xFFB45309) : isNhap ? context.p.teal : const Color(0xFF15803D);
+          final bgIcon  = isReturn ? const Color(0xFFFEF3C7) : isNhap ? const Color(0xFFF3E8FF) : const Color(0xFFDCFCE7);
+          final qtyColor = isReturn ? const Color(0xFFB45309) : isNhap ? kPurple : const Color(0xFF15803D);
           final badgeTxt = isReturn ? s.returns_ : isNhap ? s.typeIn : s.typeOut;
           return Container(
             margin: const EdgeInsets.only(bottom: 8),
@@ -396,7 +396,7 @@ class _ViewBtn extends StatelessWidget {
     child: AnimatedContainer(
       duration: const Duration(milliseconds: 150),
       padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
-      decoration: BoxDecoration(color: active == key_ ? context.p.navy : Colors.transparent, borderRadius: BorderRadius.circular(19)),
+      decoration: BoxDecoration(color: active == key_ ? kPurple : Colors.transparent, borderRadius: BorderRadius.circular(19)),
       child: Text(label, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: active == key_ ? Colors.white : context.p.text2)),
     ),
   );
@@ -410,8 +410,8 @@ class _TypeBtn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isActive = active == key_;
-    final color = key_ == 'nhap' ? context.p.teal : const Color(0xFF15803D);
-    final bg    = key_ == 'nhap' ? const Color(0xFFE0F7FA) : const Color(0xFFDCFCE7);
+    final color = key_ == 'nhap' ? kPurple : const Color(0xFF15803D);
+    final bg    = key_ == 'nhap' ? const Color(0xFFF3E8FF) : const Color(0xFFDCFCE7);
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(

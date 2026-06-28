@@ -39,39 +39,80 @@ class PageHeader extends StatelessWidget {
   }
 }
 
-// ── Wave Logo (CustomPainter) ─────────────────────────────────────────────────
-class WaveLogo extends StatelessWidget {
+// ── Fish Logo (CustomPainter) — đồng bộ với icon app ──────────────────────────
+class FishLogo extends StatelessWidget {
   final double size;
   final Color? color;
-  const WaveLogo({super.key, this.size = 26, this.color});
+  const FishLogo({super.key, this.size = 26, this.color});
 
   @override
   Widget build(BuildContext context) => SizedBox(
     width: size, height: size,
-    child: CustomPaint(painter: _WavePainter(color: color ?? context.p.teal)),
+    child: CustomPaint(painter: _FishPainter(color: color ?? context.p.teal)),
   );
 }
 
-class _WavePainter extends CustomPainter {
+class _FishPainter extends CustomPainter {
   final Color color;
-  _WavePainter({required this.color});
+  _FishPainter({required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color ..strokeWidth = 2.2 ..strokeCap = StrokeCap.round ..style = PaintingStyle.stroke;
-    for (final yFrac in [0.33, 0.55, 0.78]) {
-      final y = size.height * yFrac;
-      final path = Path()..moveTo(0, y);
-      for (double x = 0; x <= size.width; x += size.width / 4) {
-        path.quadraticBezierTo(x + size.width / 8, y - 3, x + size.width / 4, y);
-      }
-      canvas.drawPath(path, paint);
-    }
+    final s        = size.width;
+    final cx       = s * 0.534, cy = s * 0.515;
+    final bodyRx   = s * 0.210, bodyRy = s * 0.151;
+    final fillPaint = Paint()..color = color;
+    final eyeColor  = Color.lerp(color, Colors.black, 0.4)!;
+    final glintColor = Colors.white.withValues(alpha: 0.95);
+
+    // ── Forked tail ──
+    final tailAttachTop = Offset(cx - bodyRx * 0.88, cy - bodyRy * 0.55);
+    final tailAttachBot = Offset(cx - bodyRx * 0.88, cy + bodyRy * 0.55);
+    final tail = Path()
+      ..moveTo(tailAttachTop.dx, tailAttachTop.dy)
+      ..quadraticBezierTo(cx - bodyRx * 1.6, cy - bodyRy * 1.15, cx - bodyRx * 1.95, cy - bodyRy * 1.35)
+      ..quadraticBezierTo(cx - bodyRx * 1.35, cy - bodyRy * 0.25, cx - bodyRx * 1.05, cy)
+      ..quadraticBezierTo(cx - bodyRx * 1.35, cy + bodyRy * 0.25, cx - bodyRx * 1.95, cy + bodyRy * 1.35)
+      ..quadraticBezierTo(cx - bodyRx * 1.6, cy + bodyRy * 1.15, tailAttachBot.dx, tailAttachBot.dy)
+      ..close();
+    canvas.drawPath(tail, fillPaint);
+
+    // ── Dorsal fin ──
+    final dorsal = Path()
+      ..moveTo(cx - bodyRx * 0.55, cy - bodyRy * 0.92)
+      ..quadraticBezierTo(cx - bodyRx * 0.50, cy - bodyRy * 1.65, cx - bodyRx * 0.05, cy - bodyRy * 1.85)
+      ..quadraticBezierTo(cx + bodyRx * 0.10, cy - bodyRy * 1.55, cx + bodyRx * 0.30, cy - bodyRy * 0.85)
+      ..close();
+    canvas.drawPath(dorsal, fillPaint);
+
+    // ── Pectoral fin ──
+    final pectoral = Path()
+      ..moveTo(cx - bodyRx * 0.10, cy + bodyRy * 0.85)
+      ..quadraticBezierTo(cx + bodyRx * 0.05, cy + bodyRy * 1.35, cx + bodyRx * 0.35, cy + bodyRy * 1.55)
+      ..quadraticBezierTo(cx + bodyRx * 0.55, cy + bodyRy * 1.15, cx + bodyRx * 0.62, cy + bodyRy * 0.70)
+      ..close();
+    canvas.drawPath(pectoral, fillPaint);
+
+    // ── Body (covers fin bases for a clean join) ──
+    canvas.drawOval(Rect.fromCenter(center: Offset(cx, cy), width: bodyRx * 2, height: bodyRy * 2), fillPaint);
+
+    // ── Smiling mouth ──
+    final mouthPaint = Paint()
+      ..color = eyeColor ..style = PaintingStyle.stroke
+      ..strokeWidth = s * 0.018 ..strokeCap = StrokeCap.round;
+    final mouth = Path()
+      ..moveTo(cx + bodyRx * 0.74, cy + bodyRy * 0.08)
+      ..quadraticBezierTo(cx + bodyRx * 0.88, cy + bodyRy * 0.42, cx + bodyRx * 0.99, cy + bodyRy * 0.10);
+    canvas.drawPath(mouth, mouthPaint);
+
+    // ── Eye: pupil + glint ──
+    final eyeCenter = Offset(cx + bodyRx * 0.62, cy - bodyRy * 0.18);
+    canvas.drawCircle(eyeCenter, bodyRx * 0.122, Paint()..color = eyeColor);
+    canvas.drawCircle(eyeCenter.translate(bodyRx * 0.04, -bodyRy * 0.05), bodyRx * 0.033, Paint()..color = glintColor);
   }
 
   @override
-  bool shouldRepaint(_) => false;
+  bool shouldRepaint(covariant _FishPainter old) => old.color != color;
 }
 
 // ── Custom CheckBox ───────────────────────────────────────────────────────────
@@ -87,9 +128,10 @@ class OceanCheckBox extends StatelessWidget {
       duration: const Duration(milliseconds: 150),
       width: 22, height: 22,
       decoration: BoxDecoration(
-        color: checked ? context.p.teal : context.p.surface,
+        gradient: checked ? kGradPP : null,
+        color: checked ? null : context.p.surface,
         borderRadius: BorderRadius.circular(7),
-        border: Border.all(color: checked ? context.p.teal : const Color(0xFFCBD5E1), width: 2),
+        border: Border.all(color: checked ? const Color(0xFF7C3AED) : const Color(0xFFCBD5E1), width: 2),
       ),
       child: checked ? const Icon(Icons.check, color: Colors.white, size: 14) : null,
     ),

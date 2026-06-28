@@ -8,6 +8,7 @@ import '../l10n/app_strings.dart';
 import '../services/firebase_service.dart';
 import '../widgets/common_widgets.dart';
 import '../widgets/lang_switcher.dart';
+import '../widgets/theme_switcher.dart';
 import 'quote_screen.dart';
 import 'debt_screen.dart';
 import 'import_export_screen.dart';
@@ -102,12 +103,14 @@ class _MainShellState extends State<MainShell> {
               color: context.p.surface,
               border: Border(bottom: BorderSide(color: context.p.border))),
             child: Row(children: [
-              const WaveLogo(size: 24),
+              const FishLogo(size: 24),
               const SizedBox(width: 9),
               Text('iCa',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800,
                       color: context.p.navy, letterSpacing: -0.4)),
               const Spacer(),
+              const ThemeSwitcher(),
+              const SizedBox(width: 8),
               const LangSwitcher(),
               const SizedBox(width: 8),
 
