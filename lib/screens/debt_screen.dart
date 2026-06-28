@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -38,6 +39,13 @@ class _CongNoMain extends StatefulWidget {
   State<_CongNoMain> createState() => _CongNoMainState();
 }
 
+String _fmtInput(String raw) {
+  final digits = raw.replaceAll(RegExp(r'[^0-9]'), '');
+  if (digits.isEmpty) return '';
+  final n = int.tryParse(digits) ?? 0;
+  return fmt(n.toDouble());
+}
+
 class _CongNoMainState extends State<_CongNoMain> {
   bool _showAdd = false;
   String? _selectedCustId;
@@ -58,7 +66,7 @@ class _CongNoMainState extends State<_CongNoMain> {
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
-    final file = await picker.pickImage(source: ImageSource.gallery, maxWidth: 1080, imageQuality: 80);
+    final file = await picker.pickImage(source: ImageSource.gallery, maxWidth: 800, imageQuality: 65);
     if (file == null) return;
     final bytes = await file.readAsBytes();
     setState(() => _imageBytes = bytes);
@@ -80,7 +88,7 @@ class _CongNoMainState extends State<_CongNoMain> {
       _amountCtrl.clear(); _noteCtrl.clear();
       if (mounted) {
         setState(() { _showAdd = false; _imageBytes = null; _saving = false; });
-        showToast(context, 'Đã thêm công nợ');
+        showToast(context, 'Đã lưu: ${fmt(amt)}đ');
       }
     } catch (e) {
       if (mounted) {
@@ -124,9 +132,9 @@ class _CongNoMainState extends State<_CongNoMain> {
                   duration: const Duration(milliseconds: 150),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
                   decoration: BoxDecoration(
-                    color: _showAdd ? const Color(0xFFFEF2F2) : context.p.surface.withOpacity(0.2),
+                    color: _showAdd ? const Color(0xFFFEF2F2) : context.p.surface.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: _showAdd ? const Color(0xFFFECACA) : context.p.surface.withOpacity(0.3), width: 1.5),
+                    border: Border.all(color: _showAdd ? const Color(0xFFFECACA) : context.p.surface.withValues(alpha: 0.3), width: 1.5),
                   ),
                   child: Text(_showAdd ? '✕ Đóng' : '＋ Thêm mới',
                       style: TextStyle(color: _showAdd ? const Color(0xFFDC2626) : Colors.white, fontSize: 12, fontWeight: FontWeight.w700)),
@@ -166,7 +174,7 @@ class _CongNoMainState extends State<_CongNoMain> {
                 decoration: BoxDecoration(
                   color: context.p.surface, borderRadius: BorderRadius.circular(16),
                   border: const Border(left: BorderSide(color: Color(0xFFDC2626), width: 3)),
-                  boxShadow: [BoxShadow(color: context.p.textMain.withOpacity(0.04), blurRadius: 4)],
+                  boxShadow: [BoxShadow(color: context.p.textMain.withValues(alpha: 0.04), blurRadius: 4)],
                 ),
                 child: Row(children: [
                   Container(width: 46, height: 46, decoration: BoxDecoration(color: const Color(0xFFFEF2F2), borderRadius: BorderRadius.circular(14)),
@@ -218,7 +226,18 @@ class _CongNoMainState extends State<_CongNoMain> {
         const SizedBox(height: 10),
         // amount
         const FieldLabel('Số tiền (đ)'),
-        OceanInput(controller: _amountCtrl, hint: '0', keyboardType: TextInputType.number),
+        OceanInput(
+          controller: _amountCtrl, hint: '0', keyboardType: TextInputType.number,
+          onChanged: (v) {
+            final formatted = _fmtInput(v);
+            if (formatted != v) {
+              _amountCtrl.value = TextEditingValue(
+                text: formatted,
+                selection: TextSelection.collapsed(offset: formatted.length),
+              );
+            }
+          },
+        ),
         const SizedBox(height: 10),
         // dates
         Row(children: [
@@ -307,7 +326,7 @@ class _CustomerDebtDetailState extends State<_CustomerDebtDetail> {
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
-    final file = await picker.pickImage(source: ImageSource.gallery, maxWidth: 1080, imageQuality: 80);
+    final file = await picker.pickImage(source: ImageSource.gallery, maxWidth: 800, imageQuality: 65);
     if (file == null) return;
     final bytes = await file.readAsBytes();
     setState(() => _imageBytes = bytes);
@@ -329,7 +348,7 @@ class _CustomerDebtDetailState extends State<_CustomerDebtDetail> {
       _amountCtrl.clear(); _noteCtrl.clear();
       if (mounted) {
         setState(() { _showAdd = false; _imageBytes = null; _saving = false; });
-        showToast(context, 'Đã thêm công nợ');
+        showToast(context, 'Đã lưu: ${fmt(amt)}đ');
       }
     } catch (e) {
       if (mounted) {
@@ -406,7 +425,18 @@ class _CustomerDebtDetailState extends State<_CustomerDebtDetail> {
         const Text('✦ CÔNG NỢ MỚI', style: TextStyle(fontSize: 10, color: kPurple, fontWeight: FontWeight.w800, letterSpacing: 1)),
         const SizedBox(height: 12),
         const FieldLabel('Số tiền (đ)'),
-        OceanInput(controller: _amountCtrl, hint: '0', keyboardType: TextInputType.number),
+        OceanInput(
+          controller: _amountCtrl, hint: '0', keyboardType: TextInputType.number,
+          onChanged: (v) {
+            final formatted = _fmtInput(v);
+            if (formatted != v) {
+              _amountCtrl.value = TextEditingValue(
+                text: formatted,
+                selection: TextSelection.collapsed(offset: formatted.length),
+              );
+            }
+          },
+        ),
         const SizedBox(height: 10),
         Row(children: [
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -469,6 +499,14 @@ class _DebtCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isPaid = debt.isPaid;
+
+    // Resolve image: prefer local bytes, decode base64, or use URL
+    Uint8List? imgBytes = debt.imageBytes;
+    if (imgBytes == null && debt.imageBase64 != null) {
+      try { imgBytes = base64Decode(debt.imageBase64!); } catch (_) {}
+    }
+    final hasImg = imgBytes != null || debt.imageUrl != null;
+
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 200),
       opacity: isPaid ? 0.7 : 1.0,
@@ -478,7 +516,7 @@ class _DebtCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: context.p.surface, borderRadius: BorderRadius.circular(16),
           border: Border(left: BorderSide(color: isPaid ? const Color(0xFF22C55E) : const Color(0xFFF59E0B), width: 3)),
-          boxShadow: [BoxShadow(color: context.p.textMain.withOpacity(0.04), blurRadius: 4)],
+          boxShadow: [BoxShadow(color: context.p.textMain.withValues(alpha: 0.04), blurRadius: 4)],
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
@@ -498,6 +536,30 @@ class _DebtCard extends StatelessWidget {
             Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8), decoration: BoxDecoration(color: context.p.surface2, borderRadius: BorderRadius.circular(9)),
                 child: Row(children: [Icon(Icons.chat_bubble_outline_rounded, size: 13, color: context.p.textMuted), const SizedBox(width: 6), Expanded(child: Text(debt.note, style: TextStyle(fontSize: 12, color: context.p.text2, fontStyle: FontStyle.italic)))])),
           ],
+          // ── Image thumbnail inline ──
+          if (hasImg) ...[
+            const SizedBox(height: 10),
+            GestureDetector(
+              onTap: () => onImageTap(imgBytes, debt.imageUrl),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: imgBytes != null
+                    ? Image.memory(imgBytes, width: double.infinity, height: 160, fit: BoxFit.cover)
+                    : Image.network(
+                        debt.imageUrl!,
+                        width: double.infinity, height: 160, fit: BoxFit.cover,
+                        loadingBuilder: (ctx, child, progress) => progress == null
+                            ? child
+                            : Container(height: 160, color: context.p.bg,
+                                child: const Center(child: CircularProgressIndicator(strokeWidth: 2))),
+                        errorBuilder: (_, __, ___) => Container(
+                          height: 50, color: context.p.bg,
+                          child: Center(child: Icon(Icons.broken_image_rounded, color: context.p.textMuted)),
+                        ),
+                      ),
+              ),
+            ),
+          ],
           if (isPaid && debt.paidDate != null) ...[
             const SizedBox(height: 6),
             Text('✓ Thu tiền ngày ${fmtDate(debt.paidDate)}', style: const TextStyle(fontSize: 11, color: Color(0xFF15803D), fontWeight: FontWeight.w600)),
@@ -515,32 +577,18 @@ class _DebtCard extends StatelessWidget {
           ],
           const SizedBox(height: 10),
           Row(children: [
-            if (!isPaid) Expanded(child: GestureDetector(onTap: onMarkPaid,
-              child: Container(height: 38, decoration: BoxDecoration(color: const Color(0xFFDCFCE7), borderRadius: BorderRadius.circular(19)),
-                  child: const Center(child: Text('✓ Đánh dấu đã thu', style: TextStyle(color: Color(0xFF15803D), fontSize: 12, fontWeight: FontWeight.w700)))))),
-            if (!isPaid) const SizedBox(width: 8),
-            if (debt.imageBytes != null || debt.imageUrl != null) ...[
-              GestureDetector(
-                onTap: () => onImageTap(debt.imageBytes, debt.imageUrl),
-                child: Container(
-                  height: 38,
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(color: context.p.surface2, borderRadius: BorderRadius.circular(19)),
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    Icon(Icons.photo_camera_rounded, size: 14, color: context.p.text2),
-                    const SizedBox(width: 5),
-                    Text('Xem thêm', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: context.p.text2)),
-                  ]),
-                ),
-              ),
+            if (!isPaid && !isConfirmDel) ...[
+              Expanded(child: GestureDetector(onTap: onMarkPaid,
+                child: Container(height: 38, decoration: BoxDecoration(color: const Color(0xFFDCFCE7), borderRadius: BorderRadius.circular(19)),
+                    child: const Center(child: Text('✓ Đánh dấu đã thu', style: TextStyle(color: Color(0xFF15803D), fontSize: 12, fontWeight: FontWeight.w700)))))),
               const SizedBox(width: 8),
             ],
             if (isConfirmDel) ...[
               const Text('Xoá?', style: TextStyle(fontSize: 11, color: Color(0xFFDC2626), fontWeight: FontWeight.w700)),
               const SizedBox(width: 6),
-              GestureDetector(onTap: onDeleteConfirm, child: Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), decoration: BoxDecoration(color: const Color(0xFFDC2626), borderRadius: BorderRadius.circular(16)), child: const Text('Xoá', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)))),
-              const SizedBox(width: 6),
-              GestureDetector(onTap: onDeleteCancel, child: Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), decoration: BoxDecoration(color: context.p.bg, borderRadius: BorderRadius.circular(16)), child: Text('Huỷ', style: TextStyle(color: context.p.text2, fontSize: 11)))),
+              Expanded(child: GestureDetector(onTap: onDeleteConfirm, child: Container(height: 38, decoration: BoxDecoration(color: const Color(0xFFDC2626), borderRadius: BorderRadius.circular(19)), child: const Center(child: Text('Xác nhận xoá', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700)))))),
+              const SizedBox(width: 8),
+              GestureDetector(onTap: onDeleteCancel, child: Container(width: 38, height: 38, decoration: BoxDecoration(color: context.p.bg, borderRadius: BorderRadius.circular(19)), child: Center(child: Icon(Icons.close_rounded, size: 16, color: context.p.text2)))),
             ] else GestureDetector(onTap: onDeleteTap, child: Container(width: 38, height: 38, decoration: BoxDecoration(color: const Color(0xFFFEF2F2), borderRadius: BorderRadius.circular(19)), child: const Center(child: Icon(Icons.delete_outline_rounded, size: 16, color: Color(0xFFDC2626))))),
           ]),
         ]),
@@ -565,8 +613,8 @@ class _DebtStat extends StatelessWidget {
   const _DebtStat(this.title, this.amount, this.sub, this.color, this.bg);
   @override
   Widget build(BuildContext context) => Container(padding: const EdgeInsets.fromLTRB(14,12,14,12), decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(14)), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-    Text(title.toUpperCase(), style: TextStyle(fontSize: 9, color: color.withOpacity(0.75), fontWeight: FontWeight.w700, letterSpacing: 0.8)),
+    Text(title.toUpperCase(), style: TextStyle(fontSize: 9, color: color.withValues(alpha: 0.75), fontWeight: FontWeight.w700, letterSpacing: 0.8)),
     const SizedBox(height: 3), Text(amount, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: color)),
-    Text(sub, style: TextStyle(fontSize: 10, color: color.withOpacity(0.75))),
+    Text(sub, style: TextStyle(fontSize: 10, color: color.withValues(alpha: 0.75))),
   ]));
 }

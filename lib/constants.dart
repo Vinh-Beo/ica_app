@@ -110,6 +110,7 @@ String fmt(double n) {
 }
 
 String fmtK(double n) {
+  if (n.abs() < 1000) return fmt(n);
   final k = n / 1000;
   return '${k % 1 == 0 ? k.toStringAsFixed(0) : k.toStringAsFixed(1)}k';
 }

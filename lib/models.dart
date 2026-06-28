@@ -199,12 +199,13 @@ class DebtRecord {
   double amount;
   String deliveryDate;
   String createdDate;
-  String? imageUrl;          // URL ảnh trên Storage
-  Uint8List? imageBytes;     // tạm thời khi chọn ảnh mới (không lưu Firestore)
+  String? imageUrl;      // legacy: Firebase Storage URL
+  String? imageBase64;   // base64 JPEG, lưu thẳng Firestore
+  Uint8List? imageBytes; // tạm: bytes vừa pick, không lưu Firestore
   String note;
   bool isPaid;
   String? paidDate;
-  String by;                 // người tạo (tên user)
+  String by;
 
   DebtRecord({
     required this.id,
@@ -213,6 +214,7 @@ class DebtRecord {
     required this.deliveryDate,
     required this.createdDate,
     this.imageUrl,
+    this.imageBase64,
     this.imageBytes,
     this.note = '',
     this.isPaid = false,
@@ -220,12 +222,15 @@ class DebtRecord {
     this.by = '',
   });
 
+  bool get hasImage => imageBase64 != null || imageUrl != null || imageBytes != null;
+
   Map<String, dynamic> toMap() => {
         'customerId': customerId,
         'amount': amount,
         'deliveryDate': deliveryDate,
         'createdDate': createdDate,
         'imageUrl': imageUrl,
+        'imageBase64': imageBase64,
         'note': note,
         'isPaid': isPaid,
         'paidDate': paidDate,
@@ -239,6 +244,7 @@ class DebtRecord {
         deliveryDate: m['deliveryDate'] ?? '',
         createdDate: m['createdDate'] ?? '',
         imageUrl: m['imageUrl'],
+        imageBase64: m['imageBase64'],
         note: m['note'] ?? '',
         isPaid: m['isPaid'] ?? false,
         paidDate: m['paidDate'],

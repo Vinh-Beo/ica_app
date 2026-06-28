@@ -9,10 +9,11 @@ import '../widgets/app_icon.dart';
 // ── Loại thông báo → icon + màu ──
 class _NType { final IconData ic; final Color color; const _NType(this.ic, this.color); }
 const _notifTypes = {
-  'debt_new':  _NType(Icons.receipt_long_rounded,     Color(0xFF7C3AED)),
-  'debt_paid': _NType(Icons.check_circle_rounded,     Color(0xFF15803D)),
-  'quote':     _NType(Icons.description_rounded,      Color(0xFF0E7C8C)),
-  'system':    _NType(Icons.notifications_rounded,    Color(0xFFB45309)),
+  'debt_new':     _NType(Icons.receipt_long_rounded,     Color(0xFF7C3AED)),
+  'debt_paid':    _NType(Icons.check_circle_rounded,     Color(0xFF15803D)),
+  'debt_deleted': _NType(Icons.delete_outline_rounded,   Color(0xFFDC2626)),
+  'quote':        _NType(Icons.description_rounded,      Color(0xFF0E7C8C)),
+  'system':       _NType(Icons.notifications_rounded,    Color(0xFFB45309)),
 };
 
 // Thiết bị giả lập (mock) để minh hoạ push

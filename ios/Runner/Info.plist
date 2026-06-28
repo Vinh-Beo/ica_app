@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Chọn ảnh đính kèm công nợ</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Chụp ảnh đính kèm công nợ</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Lưu ảnh từ ứng dụng</string>
 </dict>
 </plist>

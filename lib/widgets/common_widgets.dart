@@ -141,7 +141,7 @@ class SectionCard extends StatelessWidget {
     padding: padding ?? const EdgeInsets.all(14),
     decoration: BoxDecoration(
       color: context.p.surface, borderRadius: BorderRadius.circular(16),
-      boxShadow: [BoxShadow(color: context.p.textMain.withOpacity(0.05), blurRadius: 4)],
+      boxShadow: [BoxShadow(color: context.p.textMain.withValues(alpha: 0.05), blurRadius: 4)],
     ),
     child: child,
   );
