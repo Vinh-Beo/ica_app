@@ -145,9 +145,8 @@ class iCaApp extends StatelessWidget {
           brightness: Brightness.dark,
           surface: AppPalette.dark.surface,
         ),
-        dialogBackgroundColor: AppPalette.dark.surface,
         useMaterial3: true,
-        inputDecorationTheme: const InputDecorationTheme(border: InputBorder.none),
+        inputDecorationTheme: const InputDecorationTheme(border: InputBorder.none), dialogTheme: DialogThemeData(backgroundColor: AppPalette.dark.surface),
       ),
       home: const _AuthGate(),
     );
@@ -170,9 +169,9 @@ class _AuthGate extends StatelessWidget {
         }
         final loggedIn = snapshot.hasData;
         if (loggedIn) {
-          return  MainShell();
+          return  const MainShell();
         }
-        return  LoginScreen();
+        return  const LoginScreen();
       },
     );
   }

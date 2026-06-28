@@ -6,7 +6,7 @@ import '../services/auth_errors.dart';
 import '../widgets/common_widgets.dart';
 
 class RegisterScreen extends StatefulWidget {
-  RegisterScreen({super.key});
+  const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -52,14 +52,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final s      = AppStrings.of(context);
-    final bottom = MediaQuery.of(context).viewInsets.bottom;
+    final s          = AppStrings.of(context);
+    final keyboardH  = MediaQuery.of(context).viewInsets.bottom;
+    final safeBottom = MediaQuery.of(context).padding.bottom;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Stack(children: [
         // gradient bg
         Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0xFF7C3AED), Color(0xFFA855F7), Color(0xFFEC4899)],
               begin: Alignment.topLeft, end: Alignment.bottomRight,
@@ -70,10 +71,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Positioned(bottom: 340, left: -50, child: _circle(150, 0.05)),
 
         SafeArea(
+          bottom: false,
           child: Column(children: [
             // header with back
             Padding(
-              padding: EdgeInsets.fromLTRB(12, 8, 12, 0),
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
               child: Row(children: [
                 GestureDetector(
                   onTap: () => Navigator.of(context).maybePop(),
@@ -84,7 +86,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: Colors.white.withOpacity(0.25)),
                     ),
-                    child: Icon(Icons.chevron_left, color: Colors.white, size: 22),
+                    child: const Icon(Icons.chevron_left, color: Colors.white, size: 22),
                   ),
                 ),
               ]),
@@ -101,10 +103,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       borderRadius: BorderRadius.circular(18),
                       border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
                     ),
-                    child: Center(child: WaveLogo(size: 32, color: Colors.white)),
+                    child: const Center(child: WaveLogo(size: 32, color: Colors.white)),
                   ),
-                  SizedBox(height: 10),
-                  Text('iCa',
+                  const SizedBox(height: 10),
+                  const Text('iCa',
                       style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.6)),
                 ]),
               ),
@@ -115,38 +117,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
               constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.72),
               decoration: BoxDecoration(
                 color: context.p.surface,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
               ),
               child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(24, 20, 24, 24 + bottom),
+                padding: EdgeInsets.fromLTRB(24, 20, 24, 24 + keyboardH + safeBottom),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
                   Center(child: Container(width: 40, height: 4,
                     decoration: BoxDecoration(color: context.p.border, borderRadius: BorderRadius.circular(2)))),
-                  SizedBox(height: 18),
+                  const SizedBox(height: 18),
                   Text(s.regTitle, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: context.p.textMain)),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(s.regWelcome,
                       style: TextStyle(fontSize: 12, color: context.p.textMuted)),
-                  SizedBox(height: 18),
+                  const SizedBox(height: 18),
 
                   FieldLabel(s.regName),
                   OceanInput(controller: _nameCtrl, hint: s.regNameHint,
                       prefix: Icon(Icons.person_outline, size: 18, color: context.p.textMuted),
                       onChanged: (_) => setState(() => _error = '')),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
                   FieldLabel(s.loginEmail),
                   OceanInput(controller: _emailCtrl, hint: s.loginEmailHint,
                       keyboardType: TextInputType.emailAddress,
                       prefix: Icon(Icons.mail_outline, size: 18, color: context.p.textMuted),
                       onChanged: (_) => setState(() => _error = '')),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
                   FieldLabel(s.regPhone),
                   OceanInput(controller: _phoneCtrl, hint: s.regPhoneHint,
                       keyboardType: TextInputType.phone,
                       prefix: Icon(Icons.phone_outlined, size: 18, color: context.p.textMuted)),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
                   FieldLabel(s.loginPassword),
                   OceanInput(controller: _pwCtrl, hint: '••••••••', obscureText: !_showPw,
@@ -156,75 +158,75 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         child: Icon(_showPw ? Icons.visibility_off : Icons.visibility, size: 20, color: context.p.textMuted),
                       ),
                       onChanged: (_) => setState(() => _error = '')),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
                   FieldLabel(s.loginPassword),
                   OceanInput(controller: _confirmCtrl, hint: '••••••••', obscureText: !_showPw,
                       prefix: Icon(Icons.lock_outline, size: 18, color: context.p.textMuted),
                       onChanged: (_) => setState(() => _error = '')),
-                  SizedBox(height: 14),
+                  const SizedBox(height: 14),
 
                   // terms checkbox
                   GestureDetector(
                     onTap: () => setState(() { _agree = !_agree; _error = ''; }),
                     child: Row(children: [
                       AnimatedContainer(
-                        duration: Duration(milliseconds: 150),
+                        duration: const Duration(milliseconds: 150),
                         width: 22, height: 22,
                         decoration: BoxDecoration(
-                          color: _agree ? Color(0xFF9333EA) : Colors.white,
+                          color: _agree ? const Color(0xFF9333EA) : Colors.white,
                           borderRadius: BorderRadius.circular(7),
-                          border: Border.all(color: _agree ? Color(0xFF9333EA) : context.p.textMuted, width: 2),
+                          border: Border.all(color: _agree ? const Color(0xFF9333EA) : context.p.textMuted, width: 2),
                         ),
-                        child: _agree ? Icon(Icons.check, color: Colors.white, size: 14) : null,
+                        child: _agree ? const Icon(Icons.check, color: Colors.white, size: 14) : null,
                       ),
-                      SizedBox(width: 9),
+                      const SizedBox(width: 9),
                       Expanded(child: Text.rich(TextSpan(children: [
                         TextSpan(text: 'Tôi đồng ý với ', style: TextStyle(fontSize: 12, color: context.p.text2)),
-                        TextSpan(text: 'Điều khoản & Chính sách', style: TextStyle(fontSize: 12, color: Color(0xFF9333EA), fontWeight: FontWeight.w700)),
+                        const TextSpan(text: 'Điều khoản & Chính sách', style: TextStyle(fontSize: 12, color: Color(0xFF9333EA), fontWeight: FontWeight.w700)),
                       ]))),
                     ]),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   if (_error.isNotEmpty) ...[
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-                      decoration: BoxDecoration(color: Color(0xFFFEF2F2), borderRadius: BorderRadius.circular(10)),
-                      child: Text('⚠️ $_error', style: TextStyle(color: Color(0xFFDC2626), fontSize: 12, fontWeight: FontWeight.w600)),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                      decoration: BoxDecoration(color: const Color(0xFFFEF2F2), borderRadius: BorderRadius.circular(10)),
+                      child: Text('⚠️ $_error', style: const TextStyle(color: Color(0xFFDC2626), fontSize: 12, fontWeight: FontWeight.w600)),
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                   ],
 
                   GestureDetector(
                     onTap: _loading ? null : _register,
                     child: AnimatedContainer(
-                      duration: Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 200),
                       height: 54,
                       decoration: BoxDecoration(
-                        gradient: _loading ? null : LinearGradient(colors: [Color(0xFF7C3AED), Color(0xFFEC4899)]),
+                        gradient: _loading ? null : const LinearGradient(colors: [Color(0xFF7C3AED), Color(0xFFEC4899)]),
                         color: _loading ? context.p.textMuted : null,
                         borderRadius: BorderRadius.circular(27),
-                        boxShadow: _loading ? [] : [BoxShadow(color: Color(0xFF9333EA).withOpacity(0.4), blurRadius: 18, offset: Offset(0, 8))],
+                        boxShadow: _loading ? [] : [BoxShadow(color: const Color(0xFF9333EA).withOpacity(0.4), blurRadius: 18, offset: const Offset(0, 8))],
                       ),
                       child: Center(
                         child: _loading
                             ? Row(mainAxisSize: MainAxisSize.min, children: [
-                                SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)),
-                                SizedBox(width: 10),
-                                Text(s.regLoading, style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 15)),
+                                const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)),
+                                const SizedBox(width: 10),
+                                Text(s.regLoading, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 15)),
                               ])
-                            : Text(s.regButton, style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+                            : Text(s.regButton, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
 
                   Center(child: Row(mainAxisSize: MainAxisSize.min, children: [
                     Text(s.regHaveAcct, style: TextStyle(fontSize: 13, color: context.p.text2)),
                     GestureDetector(
                       onTap: () => Navigator.of(context).maybePop(),
-                      child: Text(s.regSignIn, style: TextStyle(fontSize: 13, color: Color(0xFF9333EA), fontWeight: FontWeight.w800)),
+                      child: Text(s.regSignIn, style: const TextStyle(fontSize: 13, color: Color(0xFF9333EA), fontWeight: FontWeight.w800)),
                     ),
                   ])),
                 ]),

@@ -8,7 +8,7 @@ import '../widgets/common_widgets.dart';
 /// Quên mật khẩu dùng Firebase: gửi email đặt lại mật khẩu.
 /// (Firebase tự gửi link reset qua email — không cần tự xử lý OTP.)
 class ForgotPasswordScreen extends StatefulWidget {
-  ForgotPasswordScreen({super.key});
+  const ForgotPasswordScreen({super.key});
 
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
@@ -42,7 +42,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       resizeToAvoidBottomInset: true,
       body: Stack(children: [
         Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0xFF7C3AED), Color(0xFFA855F7), Color(0xFFEC4899)],
               begin: Alignment.topLeft, end: Alignment.bottomRight,
@@ -55,7 +55,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           child: Column(children: [
             // back
             Padding(
-              padding: EdgeInsets.fromLTRB(12, 8, 12, 0),
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
               child: Row(children: [
                 GestureDetector(
                   onTap: () => Navigator.of(context).maybePop(),
@@ -66,7 +66,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: Colors.white.withOpacity(0.25)),
                     ),
-                    child: Icon(Icons.chevron_left, color: Colors.white, size: 22),
+                    child: const Icon(Icons.chevron_left, color: Colors.white, size: 22),
                   ),
                 ),
               ]),
@@ -82,11 +82,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: Colors.white.withOpacity(0.2), width: 1.5),
                     ),
-                    child: Icon(Icons.lock_reset, color: Colors.white, size: 32),
+                    child: const Icon(Icons.lock_reset, color: Colors.white, size: 32),
                   ),
-                  SizedBox(height: 14),
+                  const SizedBox(height: 14),
                   Text(AppStrings.of(context).forgotTitle,
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.5)),
+                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.5)),
                 ]),
               ),
             ),
@@ -95,7 +95,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             Container(
               decoration: BoxDecoration(
                 color: context.p.surface,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
               ),
               padding: EdgeInsets.fromLTRB(24, 22, 24, 32 + bottom),
               child: _sent ? _buildSent() : _buildForm(),
@@ -111,12 +111,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
     Center(child: Container(width: 40, height: 4,
       decoration: BoxDecoration(color: context.p.border, borderRadius: BorderRadius.circular(2)))),
-    SizedBox(height: 20),
+    const SizedBox(height: 20),
     Text(s.forgotTitle, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: context.p.textMain)),
-    SizedBox(height: 4),
+    const SizedBox(height: 4),
     Text(s.forgotSub,
         style: TextStyle(fontSize: 12, color: context.p.textMuted)),
-    SizedBox(height: 20),
+    const SizedBox(height: 20),
 
     FieldLabel(s.loginEmail),
     OceanInput(
@@ -125,32 +125,32 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       prefix: Icon(Icons.mail_outline, size: 18, color: context.p.textMuted),
       onChanged: (_) => setState(() => _error = ''),
     ),
-    SizedBox(height: 16),
+    const SizedBox(height: 16),
 
     if (_error.isNotEmpty) ...[
       Container(
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-        decoration: BoxDecoration(color: Color(0xFFFEF2F2), borderRadius: BorderRadius.circular(10)),
-        child: Text('⚠️ $_error', style: TextStyle(color: Color(0xFFDC2626), fontSize: 12, fontWeight: FontWeight.w600)),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+        decoration: BoxDecoration(color: const Color(0xFFFEF2F2), borderRadius: BorderRadius.circular(10)),
+        child: Text('⚠️ $_error', style: const TextStyle(color: Color(0xFFDC2626), fontSize: 12, fontWeight: FontWeight.w600)),
       ),
-      SizedBox(height: 12),
+      const SizedBox(height: 12),
     ],
 
     GestureDetector(
       onTap: _loading ? null : _send,
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 200),
         height: 54,
         decoration: BoxDecoration(
-          gradient: _loading ? null : LinearGradient(colors: [Color(0xFF7C3AED), Color(0xFFEC4899)]),
+          gradient: _loading ? null : const LinearGradient(colors: [Color(0xFF7C3AED), Color(0xFFEC4899)]),
           color: _loading ? context.p.textMuted : null,
           borderRadius: BorderRadius.circular(27),
-          boxShadow: _loading ? [] : [BoxShadow(color: Color(0xFF9333EA).withOpacity(0.4), blurRadius: 18, offset: Offset(0, 8))],
+          boxShadow: _loading ? [] : [BoxShadow(color: const Color(0xFF9333EA).withOpacity(0.4), blurRadius: 18, offset: const Offset(0, 8))],
         ),
         child: Center(
           child: _loading
-              ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-              : Text(s.forgotButton, style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
+              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+              : Text(s.forgotButton, style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800)),
         ),
       ),
     ),
@@ -162,36 +162,36 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return Column(mainAxisSize: MainAxisSize.min, children: [
     Center(child: Container(width: 40, height: 4,
       decoration: BoxDecoration(color: context.p.border, borderRadius: BorderRadius.circular(2)))),
-    SizedBox(height: 22),
+    const SizedBox(height: 22),
     Container(
       width: 64, height: 64,
-      decoration: BoxDecoration(color: Color(0xFFDCFCE7), shape: BoxShape.circle),
-      child: Icon(Icons.mark_email_read_outlined, color: Color(0xFF15803D), size: 32),
+      decoration: const BoxDecoration(color: Color(0xFFDCFCE7), shape: BoxShape.circle),
+      child: const Icon(Icons.mark_email_read_outlined, color: Color(0xFF15803D), size: 32),
     ),
-    SizedBox(height: 16),
+    const SizedBox(height: 16),
     Text('${s.forgotSentTitle} 📧', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: context.p.textMain)),
-    SizedBox(height: 8),
+    const SizedBox(height: 8),
     Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Text(
         '${s.forgotSentSub} ${_emailCtrl.text.trim()}',
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: 13, color: context.p.text2, height: 1.5),
       ),
     ),
-    SizedBox(height: 24),
+    const SizedBox(height: 24),
     GestureDetector(
       onTap: () => Navigator.of(context).maybePop(),
       child: Container(
         height: 52,
         width: double.infinity,
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [Color(0xFF7C3AED), Color(0xFFEC4899)]),
+          gradient: const LinearGradient(colors: [Color(0xFF7C3AED), Color(0xFFEC4899)]),
           borderRadius: BorderRadius.circular(26),
-          boxShadow: [BoxShadow(color: Color(0xFF9333EA).withOpacity(0.4), blurRadius: 18, offset: Offset(0, 8))],
+          boxShadow: [BoxShadow(color: const Color(0xFF9333EA).withOpacity(0.4), blurRadius: 18, offset: const Offset(0, 8))],
         ),
         child: Center(child: Text(s.backToLogin,
-            style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800))),
+            style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w800))),
       ),
     ),
   ]);

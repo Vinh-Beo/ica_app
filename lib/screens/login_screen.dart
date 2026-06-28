@@ -94,11 +94,11 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   }
 
   void _goRegister() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => RegisterScreen()));
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RegisterScreen()));
   }
 
   void _goForgot() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => ForgotPasswordScreen()));
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()));
   }
 
   @override
@@ -122,9 +122,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         ),
 
         // ── decorative circles ──
-        Positioned(top: -60, right: -60, child: _Circle(220, 0.06)),
-        Positioned(top: 50, right: -30,  child: _Circle(140, 0.04)),
-        Positioned(bottom: 280, left: -50, child: _Circle(160, 0.05)),
+        const Positioned(top: -60, right: -60, child: _Circle(220, 0.06)),
+        const Positioned(top: 50, right: -30,  child: _Circle(140, 0.04)),
+        const Positioned(bottom: 280, left: -50, child: _Circle(160, 0.05)),
 
         // ── lang switcher (top-right) ──
         Positioned(
@@ -148,7 +148,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(color: Colors.white.withValues(alpha: 0.25), width: 1.5),
                     ),
-                    child: Center(child: WaveLogo(size: 44, color: Colors.white)),
+                    child: const Center(child: WaveLogo(size: 44, color: Colors.white)),
                   ),
                   const SizedBox(height: 18),
                   const Text('iCa',

@@ -15,7 +15,7 @@ import 'client_screen.dart';
 import 'notification_screen.dart';
 
 class MainShell extends StatefulWidget {
-  MainShell({super.key});
+  const MainShell({super.key});
 
   @override
   State<MainShell> createState() => _MainShellState();
@@ -26,10 +26,10 @@ class _MainShellState extends State<MainShell> {
   bool _showUserMenu = false;
 
   final _pages =  [
-    QuoteScreen(),
-    DebtScreen(),
-    ImportExportScreen(),
-    ClientScreen(),
+    const QuoteScreen(),
+    const DebtScreen(),
+    const ImportExportScreen(),
+    const ClientScreen(),
     const NotificationScreen(),
   ];
 
@@ -53,8 +53,19 @@ class _MainShellState extends State<MainShell> {
 
   Future<void> _initNotif() async {
     final prefs = await SharedPreferences.getInstance();
-    final asked = prefs.getBool('notif_permission_asked') ?? false;
+
+    // Đã cho phép thông báo ở cấp hệ điều hành → không cần hỏi lại
+    final settings = await FirebaseMessaging.instance.getNotificationSettings();
+    final granted = settings.authorizationStatus == AuthorizationStatus.authorized ||
+        settings.authorizationStatus == AuthorizationStatus.provisional;
     if (!mounted) return;
+    if (granted) {
+      await prefs.setBool('notif_permission_asked', true);
+      FirebaseService.instance.initMessaging();
+      return;
+    }
+
+    final asked = prefs.getBool('notif_permission_asked') ?? false;
     if (!asked) {
       await showModalBottomSheet(
         context: context,
@@ -86,25 +97,25 @@ class _MainShellState extends State<MainShell> {
         SafeArea(
           bottom: false,
           child: Container(
-            padding: EdgeInsets.fromLTRB(20, 12, 16, 12),
+            padding: const EdgeInsets.fromLTRB(20, 12, 16, 12),
             decoration: BoxDecoration(
               color: context.p.surface,
               border: Border(bottom: BorderSide(color: context.p.border))),
             child: Row(children: [
-              WaveLogo(size: 24),
-              SizedBox(width: 9),
+              const WaveLogo(size: 24),
+              const SizedBox(width: 9),
               Text('iCa',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800,
                       color: context.p.navy, letterSpacing: -0.4)),
-              Spacer(),
+              const Spacer(),
               const LangSwitcher(),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
 
               // ── User avatar + sign out menu ──
               GestureDetector(
                 onTap: () => setState(() => _showUserMenu = !_showUserMenu),
                 child: Container(
-                  padding: EdgeInsets.fromLTRB(6, 5, 10, 5),
+                  padding: const EdgeInsets.fromLTRB(6, 5, 10, 5),
                   decoration: BoxDecoration(
                     color: _showUserMenu ? context.p.surface2 : context.p.bg,
                     borderRadius: BorderRadius.circular(20),
@@ -118,15 +129,15 @@ class _MainShellState extends State<MainShell> {
                         shape: BoxShape.circle,
                       ),
                       child: Center(child: Text(initials,
-                          style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w800))),
+                          style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w800))),
                     ),
-                    SizedBox(width: 7),
+                    const SizedBox(width: 7),
                     ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: 80),
+                      constraints: const BoxConstraints(maxWidth: 80),
                       child: Text(user.name, overflow: TextOverflow.ellipsis,
                           style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: context.p.textMain)),
                     ),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 4),
                     Icon(_showUserMenu ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
                         size: 16, color: context.p.textMuted),
                   ]),
@@ -165,7 +176,7 @@ class _MainShellState extends State<MainShell> {
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
                       // user info
                       Padding(
-                        padding: EdgeInsets.fromLTRB(14, 14, 14, 10),
+                        padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
                         child: Row(children: [
                           Container(
                             width: 36, height: 36,
@@ -174,9 +185,9 @@ class _MainShellState extends State<MainShell> {
                               shape: BoxShape.circle,
                             ),
                             child: Center(child: Text(initials,
-                                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800))),
+                                style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800))),
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Text(user.name, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: context.p.textMain), overflow: TextOverflow.ellipsis),
                             Text(user.email, style: TextStyle(fontSize: 11, color: context.p.textMuted), overflow: TextOverflow.ellipsis),
@@ -199,13 +210,13 @@ class _MainShellState extends State<MainShell> {
                             await FirebaseService.instance.forceSignOut();
                           }
                         },
-                        borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
+                        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                           child: Row(children: [
-                            Icon(Icons.logout_rounded, size: 16, color: Color(0xFFDC2626)),
-                            SizedBox(width: 10),
-                            Text(s.signOut, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFFDC2626))),
+                            const Icon(Icons.logout_rounded, size: 16, color: Color(0xFFDC2626)),
+                            const SizedBox(width: 10),
+                            Text(s.signOut, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFFDC2626))),
                           ]),
                         ),
                       ),
@@ -248,52 +259,52 @@ class _NotifPermissionSheetState extends State<_NotifPermissionSheet> {
   Widget build(BuildContext context) {
     final s = AppStrings.of(context);
     return Container(
-      padding: EdgeInsets.fromLTRB(24, 20, 24, 36),
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 36),
       decoration: BoxDecoration(
         color: context.p.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Container(width: 40, height: 4, margin: EdgeInsets.only(bottom: 20),
+        Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 20),
             decoration: BoxDecoration(color: context.p.border, borderRadius: BorderRadius.circular(2))),
         Container(
           width: 64, height: 64,
           decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)]),
+            gradient: const LinearGradient(colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)]),
             borderRadius: BorderRadius.circular(20),
-            boxShadow: [BoxShadow(color: Color(0xFF6366F1).withValues(alpha: 0.35), blurRadius: 16, offset: Offset(0, 6))],
+            boxShadow: [BoxShadow(color: const Color(0xFF6366F1).withValues(alpha: 0.35), blurRadius: 16, offset: const Offset(0, 6))],
           ),
-          child: Icon(Icons.notifications_active_rounded, color: Colors.white, size: 32),
+          child: const Icon(Icons.notifications_active_rounded, color: Colors.white, size: 32),
         ),
-        SizedBox(height: 18),
+        const SizedBox(height: 18),
         Text(
           s.notifPermTitle,
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: context.p.textMain),
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           s.notifPermBody,
           style: TextStyle(fontSize: 13, color: context.p.textMuted, height: 1.55),
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: 24),
+        const SizedBox(height: 24),
         GestureDetector(
           onTap: _allow,
           child: Container(
             height: 50,
             decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)]),
+              gradient: const LinearGradient(colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)]),
               borderRadius: BorderRadius.circular(25),
-              boxShadow: [BoxShadow(color: Color(0xFF6366F1).withValues(alpha: 0.4), blurRadius: 12, offset: Offset(0, 4))],
+              boxShadow: [BoxShadow(color: const Color(0xFF6366F1).withValues(alpha: 0.4), blurRadius: 12, offset: const Offset(0, 4))],
             ),
-            child: Center(child: Text(s.notifPermAllow, style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 15))),
+            child: Center(child: Text(s.notifPermAllow, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 15))),
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         GestureDetector(
           onTap: _skip,
-          child: Container(
+          child: SizedBox(
             height: 44,
             child: Center(child: Text(s.notifPermLater, style: TextStyle(fontSize: 13, color: context.p.textMuted, fontWeight: FontWeight.w600))),
           ),
@@ -306,7 +317,7 @@ class _NotifPermissionSheetState extends State<_NotifPermissionSheet> {
 class _BottomNav extends StatelessWidget {
   final int currentTab;
   final ValueChanged<int> onTap;
-  _BottomNav({required this.currentTab, required this.onTap});
+  const _BottomNav({required this.currentTab, required this.onTap});
 
   static final _tabIcons = [
     Icons.request_quote_outlined,
@@ -338,13 +349,13 @@ class _BottomNav extends StatelessWidget {
               child: Column(mainAxisSize: MainAxisSize.min, children: [
                 Stack(clipBehavior: Clip.none, children: [
                   AnimatedContainer(
-                    duration: Duration(milliseconds: 220),
+                    duration: const Duration(milliseconds: 220),
                     width: 44, height: 30,
                     decoration: BoxDecoration(
                       gradient: active ? kGradPP : null,
                       borderRadius: BorderRadius.circular(15),
                       boxShadow: active
-                          ? [BoxShadow(color: kPurple.withOpacity(0.4), blurRadius: 12, offset: Offset(0, 4))]
+                          ? [BoxShadow(color: kPurple.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 4))]
                           : null,
                     ),
                     child: Center(child: Icon(_tabIcons[i],
@@ -354,23 +365,23 @@ class _BottomNav extends StatelessWidget {
                     Positioned(
                       top: -4, right: -4,
                       child: Container(
-                        constraints: BoxConstraints(minWidth: 16),
+                        constraints: const BoxConstraints(minWidth: 16),
                         height: 16,
-                        padding: EdgeInsets.symmetric(horizontal: 3),
+                        padding: const EdgeInsets.symmetric(horizontal: 3),
                         decoration: BoxDecoration(
-                          color: Color(0xFFDC2626),
+                          color: const Color(0xFFDC2626),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: context.p.surface, width: 2),
                         ),
                         child: Center(child: Text(unread > 9 ? '9+' : '$unread',
-                            style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w800))),
+                            style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w800))),
                       ),
                     ),
                 ]),
-                SizedBox(height: 3),
+                const SizedBox(height: 3),
                 Text(labels[i],
                     style: TextStyle(fontSize: 9, fontWeight: active ? FontWeight.w800 : FontWeight.w600,
-                        color: active ? Color(0xFF9333EA) : context.p.textMuted)),
+                        color: active ? const Color(0xFF9333EA) : context.p.textMuted)),
               ]),
             ),
           );
