@@ -1,5 +1,7 @@
+import 'dart:typed_data';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../app_state.dart';
@@ -8,7 +10,6 @@ import '../l10n/app_strings.dart';
 import '../services/firebase_service.dart';
 import '../widgets/common_widgets.dart';
 import '../widgets/lang_switcher.dart';
-import '../widgets/theme_switcher.dart';
 import 'quote_screen.dart';
 import 'debt_screen.dart';
 import 'import_export_screen.dart';
@@ -25,6 +26,7 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _tab = 0;
   bool _showUserMenu = false;
+  String? _localAvatarUrl; // URL sau khi đổi avatar trong session này
 
   final _pages =  [
     const QuoteScreen(),
@@ -81,6 +83,28 @@ class _MainShellState extends State<MainShell> {
 
   void _onTabTap(int i) => setState(() { _tab = i; _showUserMenu = false; });
 
+  void _openChangePassword() {
+    setState(() => _showUserMenu = false);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const _ChangePasswordSheet(),
+    );
+  }
+
+  void _openChangeAvatar() {
+    setState(() => _showUserMenu = false);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const _ChangeAvatarSheet(),
+    ).then((result) {
+      if (result is String && mounted) setState(() => _localAvatarUrl = result);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final s        = AppStrings.of(context);
@@ -90,6 +114,7 @@ class _MainShellState extends State<MainShell> {
     final userEmail = fbUser?.email ?? '';
     final user     = _UserInfo(userName, userEmail);
     final initials = user.name.isNotEmpty ? user.name[0].toUpperCase() : '?';
+    final photoUrl = _localAvatarUrl ?? fbUser?.photoURL;
 
     return Scaffold(
       backgroundColor: context.p.bg,
@@ -109,12 +134,10 @@ class _MainShellState extends State<MainShell> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800,
                       color: context.p.navy, letterSpacing: -0.4)),
               const Spacer(),
-              const ThemeSwitcher(),
-              const SizedBox(width: 8),
               const LangSwitcher(),
               const SizedBox(width: 8),
 
-              // ── User avatar + sign out menu ──
+              // ── User avatar + menu ──
               GestureDetector(
                 onTap: () => setState(() => _showUserMenu = !_showUserMenu),
                 child: Container(
@@ -125,15 +148,7 @@ class _MainShellState extends State<MainShell> {
                     border: Border.all(color: context.p.border, width: 1.5),
                   ),
                   child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    Container(
-                      width: 26, height: 26,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: [context.p.navy, context.p.teal]),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(child: Text(initials,
-                          style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w800))),
-                    ),
+                    _AvatarCircle(photoUrl: photoUrl, initials: initials, size: 26, fontSize: 12),
                     const SizedBox(width: 7),
                     ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 80),
@@ -177,19 +192,11 @@ class _MainShellState extends State<MainShell> {
                       border: Border.all(color: context.p.border),
                     ),
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      // user info
+                      // user info header
                       Padding(
                         padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
                         child: Row(children: [
-                          Container(
-                            width: 36, height: 36,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(colors: [context.p.navy, context.p.teal]),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(child: Text(initials,
-                                style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800))),
-                          ),
+                          _AvatarCircle(photoUrl: photoUrl, initials: initials, size: 36, fontSize: 16),
                           const SizedBox(width: 10),
                           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                             Text(user.name, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: context.p.textMain), overflow: TextOverflow.ellipsis),
@@ -198,11 +205,35 @@ class _MainShellState extends State<MainShell> {
                         ]),
                       ),
                       Divider(height: 1, color: context.p.surface2),
-                      // sign out button
+                      // đổi mật khẩu
+                      InkWell(
+                        onTap: _openChangePassword,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                          child: Row(children: [
+                            Icon(Icons.lock_outline_rounded, size: 16, color: context.p.textMuted),
+                            const SizedBox(width: 10),
+                            Text('Thay đổi mật khẩu', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: context.p.textMain)),
+                          ]),
+                        ),
+                      ),
+                      // đổi avatar
+                      InkWell(
+                        onTap: _openChangeAvatar,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                          child: Row(children: [
+                            Icon(Icons.photo_camera_outlined, size: 16, color: context.p.textMuted),
+                            const SizedBox(width: 10),
+                            Text('Thay đổi ảnh đại diện', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: context.p.textMain)),
+                          ]),
+                        ),
+                      ),
+                      Divider(height: 1, color: context.p.surface2),
+                      // đăng xuất
                       InkWell(
                         onTap: () async {
                           setState(() => _showUserMenu = false);
-                          // Xoá thông tin đăng nhập đã lưu để không tự login lại
                           final prefs = await SharedPreferences.getInstance();
                           await prefs.remove('remember_me');
                           await prefs.remove('saved_email');
@@ -322,51 +353,60 @@ class _BottomNav extends StatelessWidget {
   final ValueChanged<int> onTap;
   const _BottomNav({required this.currentTab, required this.onTap});
 
-  static final _tabIcons = [
-    Icons.request_quote_outlined,
-    Icons.credit_card_outlined,
-    Icons.swap_horiz_outlined,
-    Icons.people_outline,
-    Icons.notifications_outlined,
+  static const _icons = [
+    (active: Icons.request_quote_rounded,     inactive: Icons.request_quote_outlined),
+    (active: Icons.credit_card_rounded,        inactive: Icons.credit_card_outlined),
+    (active: Icons.swap_horiz_rounded,         inactive: Icons.swap_horiz_rounded),
+    (active: Icons.people_rounded,             inactive: Icons.people_outline_rounded),
+    (active: Icons.notifications_rounded,      inactive: Icons.notifications_outlined),
   ];
 
   @override
   Widget build(BuildContext context) {
-    final s      = AppStrings.of(context);
-    final labels = [s.tabQuote, s.tabDebt, s.tabInventory, s.tabCustomers, s.tabNotif];
     final unread = context.watch<AppState>().unreadCount;
+    final bottom = MediaQuery.of(context).padding.bottom;
     return Container(
       decoration: BoxDecoration(
         color: context.p.surface,
-        border: Border(top: BorderSide(color: context.p.border)),
+        border: Border(top: BorderSide(color: context.p.border, width: 1)),
+        boxShadow: [BoxShadow(color: context.p.textMain.withValues(alpha: 0.08), blurRadius: 12, offset: const Offset(0, -2))],
       ),
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 4, top: 8),
+      padding: EdgeInsets.only(bottom: bottom > 0 ? bottom : 8, top: 4),
       child: Row(
-        children: List.generate(_tabIcons.length, (i) {
-          final active = currentTab == i;
+        children: List.generate(_icons.length, (i) {
+          final active    = currentTab == i;
           final showBadge = i == 4 && unread > 0;
+          final iconData  = active ? _icons[i].active : _icons[i].inactive;
+
           return Expanded(
             child: GestureDetector(
               onTap: () => onTap(i),
               behavior: HitTestBehavior.opaque,
               child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Stack(clipBehavior: Clip.none, children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 220),
-                    width: 44, height: 30,
-                    decoration: BoxDecoration(
-                      gradient: active ? kGradPP : null,
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: active
-                          ? [BoxShadow(color: kPurple.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 4))]
-                          : null,
+                // top indicator spanning full column
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 220),
+                  height: 3,
+                  decoration: BoxDecoration(
+                    color: active ? const Color(0xFF7C3AED) : Colors.transparent,
+                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(3)),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                // icon + badge
+                Stack(clipBehavior: Clip.none, alignment: Alignment.center, children: [
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(begin: active ? 0.0 : 1.0, end: active ? 1.0 : 0.0),
+                    duration: const Duration(milliseconds: 200),
+                    builder: (_, t, __) => Icon(
+                      iconData,
+                      size: active ? 28 : 24,
+                      color: Color.lerp(context.p.textMuted, const Color(0xFF7C3AED), t),
                     ),
-                    child: Center(child: Icon(_tabIcons[i],
-                        size: 20, color: active ? Colors.white : context.p.textMuted)),
                   ),
                   if (showBadge)
                     Positioned(
-                      top: -4, right: -4,
+                      top: -5, right: -8,
                       child: Container(
                         constraints: const BoxConstraints(minWidth: 16),
                         height: 16,
@@ -381,10 +421,7 @@ class _BottomNav extends StatelessWidget {
                       ),
                     ),
                 ]),
-                const SizedBox(height: 3),
-                Text(labels[i],
-                    style: TextStyle(fontSize: 9, fontWeight: active ? FontWeight.w800 : FontWeight.w600,
-                        color: active ? const Color(0xFF9333EA) : context.p.textMuted)),
+                const SizedBox(height: 10),
               ]),
             ),
           );
@@ -399,4 +436,257 @@ class _UserInfo {
   final String name;
   final String email;
   _UserInfo(this.name, this.email);
+}
+
+// ── Avatar circle (ảnh hoặc chữ cái đầu) ─────────────────────────────────────
+class _AvatarCircle extends StatelessWidget {
+  final String? photoUrl;
+  final String initials;
+  final double size;
+  final double fontSize;
+  const _AvatarCircle({required this.photoUrl, required this.initials, required this.size, required this.fontSize});
+
+  @override
+  Widget build(BuildContext context) {
+    if (photoUrl != null && photoUrl!.isNotEmpty) {
+      return ClipOval(
+        child: Image.network(
+          photoUrl!, width: size, height: size, fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _initials(context),
+        ),
+      );
+    }
+    return _initials(context);
+  }
+
+  Widget _initials(BuildContext context) => Container(
+    width: size, height: size,
+    decoration: BoxDecoration(
+      gradient: LinearGradient(colors: [context.p.navy, context.p.teal]),
+      shape: BoxShape.circle,
+    ),
+    child: Center(child: Text(initials, style: TextStyle(color: Colors.white, fontSize: fontSize, fontWeight: FontWeight.w800))),
+  );
+}
+
+// ── Đổi mật khẩu ─────────────────────────────────────────────────────────────
+class _ChangePasswordSheet extends StatefulWidget {
+  const _ChangePasswordSheet();
+  @override
+  State<_ChangePasswordSheet> createState() => _ChangePasswordSheetState();
+}
+
+class _ChangePasswordSheetState extends State<_ChangePasswordSheet> {
+  final _curCtrl  = TextEditingController();
+  final _newCtrl  = TextEditingController();
+  final _conCtrl  = TextEditingController();
+  bool _loading   = false;
+  bool _showCur   = false;
+  bool _showNew   = false;
+  bool _showCon   = false;
+
+  @override
+  void dispose() { _curCtrl.dispose(); _newCtrl.dispose(); _conCtrl.dispose(); super.dispose(); }
+
+  Future<void> _submit() async {
+    final cur = _curCtrl.text.trim();
+    final nw  = _newCtrl.text.trim();
+    final con = _conCtrl.text.trim();
+    if (cur.isEmpty || nw.isEmpty || con.isEmpty) {
+      showToast(context, 'Vui lòng điền đầy đủ thông tin', isError: true); return;
+    }
+    if (nw.length < 6) {
+      showToast(context, 'Mật khẩu mới phải có ít nhất 6 ký tự', isError: true); return;
+    }
+    if (nw != con) {
+      showToast(context, 'Mật khẩu xác nhận không khớp', isError: true); return;
+    }
+    setState(() => _loading = true);
+    try {
+      await FirebaseService.instance.reauthenticateAndChangePassword(cur, nw);
+      if (!mounted) return;
+      Navigator.pop(context);
+      showToast(context, 'Đã cập nhật mật khẩu');
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _loading = false);
+      final msg = e.toString().contains('wrong-password') || e.toString().contains('invalid-credential')
+          ? 'Mật khẩu hiện tại không đúng'
+          : 'Lỗi: $e';
+      showToast(context, msg, isError: true);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    eyeBtn(bool show, VoidCallback toggle) => GestureDetector(
+      onTap: toggle,
+      child: Icon(show ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+          size: 16, color: context.p.textMuted),
+    );
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 36),
+        decoration: BoxDecoration(
+          color: context.p.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(color: context.p.border, borderRadius: BorderRadius.circular(2))),
+          Row(children: [
+            Container(width: 40, height: 40,
+              decoration: BoxDecoration(color: const Color(0xFFF3E8FF), borderRadius: BorderRadius.circular(12)),
+              child: const Center(child: Icon(Icons.lock_rounded, size: 20, color: Color(0xFF7C3AED)))),
+            const SizedBox(width: 12),
+            Text('Thay đổi mật khẩu', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: context.p.textMain)),
+          ]),
+          const SizedBox(height: 20),
+          FieldLabel('Mật khẩu hiện tại'),
+          OceanInput(hint: '••••••••', controller: _curCtrl, obscureText: !_showCur,
+              suffix: eyeBtn(_showCur, () => setState(() => _showCur = !_showCur))),
+          const SizedBox(height: 10),
+          FieldLabel('Mật khẩu mới'),
+          OceanInput(hint: '••••••••', controller: _newCtrl, obscureText: !_showNew,
+              suffix: eyeBtn(_showNew, () => setState(() => _showNew = !_showNew))),
+          const SizedBox(height: 10),
+          FieldLabel('Xác nhận mật khẩu mới'),
+          OceanInput(hint: '••••••••', controller: _conCtrl, obscureText: !_showCon,
+              suffix: eyeBtn(_showCon, () => setState(() => _showCon = !_showCon))),
+          const SizedBox(height: 24),
+          GestureDetector(
+            onTap: _loading ? null : _submit,
+            child: Container(
+              height: 50, width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: _loading
+                    ? [const Color(0xFFD8B4FE), const Color(0xFFF9A8D4)]
+                    : [const Color(0xFF7C3AED), const Color(0xFFEC4899)]),
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Center(child: _loading
+                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                  : const Text('Cập nhật', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 15))),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+}
+
+// ── Đổi avatar ────────────────────────────────────────────────────────────────
+class _ChangeAvatarSheet extends StatefulWidget {
+  const _ChangeAvatarSheet();
+  @override
+  State<_ChangeAvatarSheet> createState() => _ChangeAvatarSheetState();
+}
+
+class _ChangeAvatarSheetState extends State<_ChangeAvatarSheet> {
+  Uint8List? _bytes;
+  bool _uploading = false;
+
+  Future<void> _pick() async {
+    final xfile = await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 75, maxWidth: 512);
+    if (xfile == null || !mounted) return;
+    final b = await xfile.readAsBytes();
+    setState(() => _bytes = b);
+  }
+
+  Future<void> _save() async {
+    if (_bytes == null || _uploading) return;
+    setState(() => _uploading = true);
+    try {
+      final url = await FirebaseService.instance.updateUserAvatar(_bytes!);
+      if (!mounted) return;
+      Navigator.pop(context, url);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _uploading = false);
+      showToast(context, 'Lỗi: $e', isError: true);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final fbUser   = FirebaseService.instance.currentUser;
+    final name     = fbUser?.displayName ?? fbUser?.email?.split('@').first ?? '';
+    final initials = name.isNotEmpty ? name[0].toUpperCase() : '?';
+    final photoUrl = fbUser?.photoURL;
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
+      decoration: BoxDecoration(
+        color: context.p.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 20),
+            decoration: BoxDecoration(color: context.p.border, borderRadius: BorderRadius.circular(2))),
+        Row(children: [
+          Container(width: 40, height: 40,
+            decoration: BoxDecoration(color: const Color(0xFFEDE9FE), borderRadius: BorderRadius.circular(12)),
+            child: const Center(child: Icon(Icons.photo_camera_rounded, size: 20, color: Color(0xFF7C3AED)))),
+          const SizedBox(width: 12),
+          Text('Thay đổi ảnh đại diện', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: context.p.textMain)),
+        ]),
+        const SizedBox(height: 28),
+        GestureDetector(
+          onTap: _pick,
+          child: Stack(alignment: Alignment.bottomRight, children: [
+            Container(
+              width: 96, height: 96,
+              decoration: BoxDecoration(shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFF7C3AED).withValues(alpha: 0.4), width: 2.5)),
+              child: ClipOval(child: _bytes != null
+                  ? Image.memory(_bytes!, fit: BoxFit.cover)
+                  : (photoUrl != null && photoUrl.isNotEmpty)
+                      ? Image.network(photoUrl, fit: BoxFit.cover, errorBuilder: (_, __, ___) =>
+                          _InitialsBox(initials: initials))
+                      : _InitialsBox(initials: initials)),
+            ),
+            Container(
+              width: 28, height: 28,
+              decoration: const BoxDecoration(color: Color(0xFF7C3AED), shape: BoxShape.circle),
+              child: const Center(child: Icon(Icons.camera_alt_rounded, size: 14, color: Colors.white)),
+            ),
+          ]),
+        ),
+        const SizedBox(height: 10),
+        Text('Nhấn vào ảnh để chọn từ thư viện',
+            style: TextStyle(fontSize: 12, color: context.p.textMuted)),
+        const SizedBox(height: 28),
+        GestureDetector(
+          onTap: _bytes == null ? _pick : (_uploading ? null : _save),
+          child: Container(
+            height: 50, width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: _bytes == null
+                  ? [const Color(0xFF7C3AED), const Color(0xFF9333EA)]
+                  : [const Color(0xFF5B21B6), const Color(0xFF7C3AED)]),
+              borderRadius: BorderRadius.circular(25),
+              boxShadow: [BoxShadow(color: const Color(0xFF7C3AED).withValues(alpha: 0.35), blurRadius: 8, offset: const Offset(0, 3))],
+            ),
+            child: Center(child: _uploading
+                ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                : Text(_bytes == null ? 'Chọn ảnh từ thư viện' : 'Lưu ảnh đại diện',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 15))),
+          ),
+        ),
+      ]),
+    );
+  }
+}
+
+class _InitialsBox extends StatelessWidget {
+  final String initials;
+  const _InitialsBox({required this.initials});
+  @override
+  Widget build(BuildContext context) => Container(
+    color: context.p.navy,
+    child: Center(child: Text(initials,
+        style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w800))),
+  );
 }

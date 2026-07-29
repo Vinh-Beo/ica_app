@@ -125,6 +125,29 @@ class FirebaseService {
     await _auth.currentUser?.updatePassword(newPassword);
   }
 
+  /// Re-authenticate rồi đổi mật khẩu (bắt buộc khi token cũ)
+  Future<void> reauthenticateAndChangePassword(String currentPwd, String newPwd) async {
+    final user = _auth.currentUser!;
+    final cred = EmailAuthProvider.credential(email: user.email!, password: currentPwd);
+    await user.reauthenticateWithCredential(cred);
+    await user.updatePassword(newPwd);
+  }
+
+  /// Upload avatar lên Storage + cập nhật Auth photoURL + Firestore profile.
+  /// Storage là bắt buộc; Auth và Firestore là best-effort (không throw nếu fail).
+  Future<String> updateUserAvatar(Uint8List bytes) async {
+    final u = uid!;
+    final snap = await _storage
+        .ref('users/$u/avatar.jpg')
+        .putData(bytes, SettableMetadata(contentType: 'image/jpeg'));
+    final url = await snap.ref.getDownloadURL();
+    try { await _auth.currentUser?.updatePhotoURL(url); } catch (_) {}
+    try {
+      await _profileDoc.set({'avatarUrl': url}, SetOptions(merge: true));
+    } catch (_) {}
+    return url;
+  }
+
   // ════════════════════════════════════════════════════════════════════════════
   //  SEED — tạo dữ liệu mẫu lần đầu (giữ nguyên id để liên kết tồn kho/khách)
   // ════════════════════════════════════════════════════════════════════════════
@@ -325,6 +348,28 @@ class FirebaseService {
 
   Future<void> deleteInventoryEntry(String entryId) =>
       _col('inventory').doc(entryId).delete();
+
+  // ════════════════════════════════════════════════════════════════════════════
+  //  BẢNG KÊ  (bảng kê hải sản theo khách hàng)
+  // ════════════════════════════════════════════════════════════════════════════
+
+  Stream<List<BangKeItem>> watchBangKe() => _col('bangke')
+      .orderBy('deliveryDate')
+      .snapshots()
+      .map((q) => q.docs.map((d) => BangKeItem.fromMap(d.id, d.data())).toList());
+
+  Future<void> addBangKeItem(BangKeItem item) =>
+      _col('bangke').doc(item.id).set(item.toMap());
+
+  Future<void> deleteBangKeItem(String id) =>
+      _col('bangke').doc(id).delete();
+
+  Future<void> deleteBangKeForCustomer(String custId) async {
+    final q = await _col('bangke').where('customerId', isEqualTo: custId).get();
+    final batch = _db.batch();
+    for (final d in q.docs) { batch.delete(d.reference); }
+    await batch.commit();
+  }
 
   // ════════════════════════════════════════════════════════════════════════════
   //  NOTIFICATIONS  (thông báo lưu trên Firestore)

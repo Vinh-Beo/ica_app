@@ -151,6 +151,7 @@ class AppStrings {
   String get custAddressHint => isVi ? 'VD: 123 Lê Lợi, Q.1' : 'E.g. 123 Le Loi St';
   String get custTaxCode   => isVi ? 'Mã số thuế'             : 'Tax code';
   String get custTaxHint   => isVi ? 'VD: 0123456789'         : 'E.g. 0123456789';
+  String get copied        => isVi ? 'Đã sao chép mã số thuế' : 'Tax code copied';
   String get optional      => isVi ? 'tuỳ chọn'               : 'optional';
   String get saveChanges   => isVi ? 'Lưu thay đổi'           : 'Save changes';
   String get taxPrefix     => isVi ? 'MST'                    : 'TIN';
@@ -231,6 +232,17 @@ class AppStrings {
   String get summaryHeaderTx => isVi ? '📊 TỔNG NHẬP − XUẤT'        : '📊 TOTAL IN − OUT';
   String get negQtyHint      => isVi ? '0 hoặc −số'                  : '0 or −qty';
   String get unknownSeafood  => isVi ? 'Không rõ'                    : 'Unknown';
+  String get bangKeBtn       => isVi ? 'Bảng kê'                     : 'Statement';
+  String get bangKeTitle     => isVi ? 'Bảng kê'                     : 'Statement';
+  String get bangKeNew       => isVi ? '＋ Tạo mới'                  : '＋ New Entry';
+  String get bangKeSeafood   => isVi ? 'Tên hải sản'                 : 'Seafood name';
+  String get bangKeSeafoodH  => isVi ? 'VD: Cá mú'                   : 'E.g. Red grouper';
+  String get bangKePrice     => isVi ? 'Đơn giá (đ)'                 : 'Unit price (đ)';
+  String get bangKeWeight    => isVi ? 'Khối lượng (kg)'              : 'Weight (kg)';
+  String get bangKeDelivery  => isVi ? 'Ngày giao'                    : 'Delivery date';
+  String get bangKeTotal     => isVi ? 'Tổng cộng'                   : 'Total';
+  String get bangKeEmpty     => isVi ? 'Chưa có mục nào'             : 'No entries yet';
+  String get bangKeEmptySub  => isVi ? 'Nhấn "Tạo mới" để thêm mục đầu tiên' : 'Tap "New Entry" to add the first item';
   String get relJustNow      => isVi ? 'Vừa xong'                    : 'Just now';
   String relMinAgo(int m)    => isVi ? '$m phút trước'               : '$m min ago';
   String relHourAgo(int h)   => isVi ? '$h giờ trước'                : '$h hr ago';

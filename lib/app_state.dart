@@ -54,6 +54,7 @@ class AppState extends ChangeNotifier {
   List<DebtRecord>      debts           = [];
   List<InventoryEntry>  inventoryEntries = [];
   List<AppNotification> notifications   = [];
+  List<BangKeItem>      bangKeItems     = [];
   bool loading = true;
 
   StreamSubscription? _authSub;
@@ -76,6 +77,7 @@ class AppState extends ChangeNotifier {
     _subs.add(_fb.watchQuotes().listen((d)    { quotes = d;           notifyListeners(); }));
     _subs.add(_fb.watchDebts().listen((d)     { debts = d;            notifyListeners(); }));
     _subs.add(_fb.watchInventory().listen((d) { inventoryEntries = d; notifyListeners(); }));
+    _subs.add(_fb.watchBangKe().listen((d)  { bangKeItems = d;      notifyListeners(); }));
     _subs.add(_fb.watchNotifications().listen((d) {
       notifications = d;
       loading = false;
@@ -91,7 +93,7 @@ class AppState extends ChangeNotifier {
   void _unbind() {
     _cancelData();
     customers = []; seafood = []; quotes = [];
-    debts = []; inventoryEntries = []; notifications = [];
+    debts = []; inventoryEntries = []; notifications = []; bangKeItems = [];
     notifyListeners();
   }
 
@@ -136,6 +138,15 @@ class AppState extends ChangeNotifier {
     final ov = sellOverride[selectedCustomerId]?[sfId];
     if (ov != null && ov.isNotEmpty) return double.tryParse(ov) ?? 0;
     return base * selectedCustomer.coefficient;
+  }
+
+  /// Giá bán cho bất kỳ khách hàng nào (dùng override nếu có, fallback base × coeff).
+  double getSellPriceFor(String custId, String sfId, double base) {
+    final ov = sellOverride[custId]?[sfId];
+    if (ov != null && ov.isNotEmpty) return double.tryParse(ov) ?? 0;
+    final cust = customers.firstWhere((c) => c.id == custId,
+        orElse: () => Customer(id: '', name: '', type: '', coefficient: 1));
+    return base * cust.coefficient;
   }
 
   bool isOverridden(String sfId) {
@@ -243,6 +254,14 @@ class AppState extends ChangeNotifier {
       body: '${fmt(d.amount)}đ · Xoá bởi $currentUserName',
     );
   }
+
+  // ── BangKe helpers & mutations → Firebase ───────────────────────────────────
+  List<BangKeItem> bangKeFor(String custId) =>
+      bangKeItems.where((e) => e.customerId == custId).toList();
+
+  Future<void> addBangKeItem(BangKeItem item)          => _fb.addBangKeItem(item);
+  Future<void> deleteBangKeItem(String id)             => _fb.deleteBangKeItem(id);
+  Future<void> deleteBangKeForCustomer(String custId)  => _fb.deleteBangKeForCustomer(custId);
 
   // ── Inventory mutations → Firebase ───────────────────────────────────────────
   void addInventoryEntry(InventoryEntry e) { _fb.addInventoryEntry(e); }

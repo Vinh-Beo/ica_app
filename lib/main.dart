@@ -8,7 +8,6 @@ import 'package:iCa/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'firebase_options.dart';
 import 'services/firebase_service.dart';
@@ -83,7 +82,6 @@ void main() async {
         providers: [
           ChangeNotifierProvider(create: (_) => AppState()),
           ChangeNotifierProvider(create: (_) => LangState()),
-          ChangeNotifierProvider(create: (_) => ThemeState()),
         ],
         child: const iCaApp(),
     ),
@@ -107,42 +105,12 @@ class LangState extends ChangeNotifier {
   }
 }
 
-// ── Theme state (sáng / tối / theo máy) ─────────────────────────────────────────
-class ThemeState extends ChangeNotifier {
-  static const _prefKey = 'theme_mode';
-  ThemeMode _mode = ThemeMode.system;
-  ThemeMode get mode => _mode;
-
-  ThemeState() {
-    _load();
-  }
-
-  Future<void> _load() async {
-    final prefs = await SharedPreferences.getInstance();
-    switch (prefs.getString(_prefKey)) {
-      case 'light': _mode = ThemeMode.light;
-      case 'dark':  _mode = ThemeMode.dark;
-      default:      _mode = ThemeMode.system;
-    }
-    notifyListeners();
-  }
-
-  Future<void> setMode(ThemeMode mode) async {
-    if (_mode == mode) return;
-    _mode = mode;
-    notifyListeners();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_prefKey, mode.name);
-  }
-}
-
 class iCaApp extends StatelessWidget {
   const iCaApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final locale    = context.watch<LangState>().locale;
-    final themeMode = context.watch<ThemeState>().mode;
+    final locale = context.watch<LangState>().locale;
     return MaterialApp(
       title: 'iCa',
       debugShowCheckedModeBanner: false,
@@ -154,7 +122,7 @@ class iCaApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
         // AppLocalizations.delegate,  // bật sau khi flutter gen-l10n
       ],
-      themeMode: themeMode, // sáng / tối / theo máy — chọn ở ThemeSwitcher
+      themeMode: ThemeMode.system, // luôn theo cài đặt sáng/tối của máy
       theme: ThemeData(
         brightness: Brightness.light,
         fontFamily: 'SF Pro Display',

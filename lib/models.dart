@@ -328,6 +328,48 @@ class AppNotification {
       );
 }
 
+// ── Bảng kê ───────────────────────────────────────────────────────────────────
+class BangKeItem {
+  final String id;
+  final String customerId;
+  final String seafoodName;
+  final double unitPrice;
+  final double weight;
+  final String deliveryDate; // 'yyyy-MM-dd'
+  final String createdAt;
+
+  BangKeItem({
+    required this.id,
+    required this.customerId,
+    required this.seafoodName,
+    required this.unitPrice,
+    required this.weight,
+    required this.deliveryDate,
+    required this.createdAt,
+  });
+
+  double get total => unitPrice * weight;
+
+  Map<String, dynamic> toMap() => {
+    'customerId': customerId,
+    'seafoodName': seafoodName,
+    'unitPrice': unitPrice,
+    'weight': weight,
+    'deliveryDate': deliveryDate,
+    'createdAt': createdAt,
+  };
+
+  factory BangKeItem.fromMap(String id, Map<String, dynamic> m) => BangKeItem(
+    id: id,
+    customerId: m['customerId'] ?? '',
+    seafoodName: m['seafoodName'] ?? '',
+    unitPrice: (m['unitPrice'] ?? 0).toDouble(),
+    weight: (m['weight'] ?? 0).toDouble(),
+    deliveryDate: m['deliveryDate'] ?? '',
+    createdAt: m['createdAt'] ?? '',
+  );
+}
+
 // ── Auth User ─────────────────────────────────────────────────────────────────
 class AppUser {
   final String name;
