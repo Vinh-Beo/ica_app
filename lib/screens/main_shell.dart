@@ -368,7 +368,7 @@ class _BottomNav extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: context.p.surface,
-        border: Border(top: BorderSide(color: context.p.border, width: 1)),
+        border: Border.all(color: context.p.border, width: 1),
         boxShadow: [BoxShadow(color: context.p.textMain.withValues(alpha: 0.08), blurRadius: 12, offset: const Offset(0, -2))],
       ),
       padding: EdgeInsets.only(bottom: bottom > 0 ? bottom : 8, top: 4),

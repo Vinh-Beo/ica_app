@@ -549,29 +549,46 @@ class _BangKePageState extends State<_BangKePage> {
     try {
       String fmtW(double v) => v % 1 == 0 ? v.toInt().toString() : v.toString();
 
+      // Gộp số lượng các mục cùng tên hải sản và cùng đơn giá
+      final merged = <String, BangKeItem>{};
+      for (final it in items) {
+        final key = '${it.seafoodName}|${it.unitPrice}';
+        final existing = merged[key];
+        merged[key] = existing == null
+            ? it
+            : BangKeItem(
+                id: existing.id,
+                customerId: existing.customerId,
+                seafoodName: existing.seafoodName,
+                unitPrice: existing.unitPrice,
+                weight: existing.weight + it.weight,
+                deliveryDate: existing.deliveryDate,
+                createdAt: existing.createdAt,
+              );
+      }
+      final mergedItems = merged.values.toList();
+
       final rows = StringBuffer();
-      for (int i = 0; i < items.length; i++) {
-        final it = items[i];
+      for (int i = 0; i < mergedItems.length; i++) {
+        final it = mergedItems[i];
         final t  = it.total.round();
         rows.write('<tr>'
-            '<td>${i + 1}</td>'
-            '<td>1</td>'
             '<td></td>'
             '<td>${it.seafoodName}</td>'
             '<td>KG</td>'
             '<td>${fmtW(it.weight)}</td>'
             '<td>${it.unitPrice.round()}</td>'
-            '<td>0</td>'
-            '<td>0</td>'
             '<td>$t</td>'
             '<td>0</td>'
             '<td>0</td>'
             '<td>$t</td>'
+            '<td>0</td>'
+            '<td>0</td>'
+            '<td>1</td>'
             '</tr>');
       }
 
-      final today    = DateTime.now();
-      final todayFmt = '${today.day.toString().padLeft(2,'0')}-${today.month.toString().padLeft(2,'0')}-${today.year}';
+      final today = DateTime.now();
 
       final html = '''<html xmlns:o="urn:schemas-microsoft-com:office:office"
 xmlns:x="urn:schemas-microsoft-com:office:excel"
@@ -588,31 +605,32 @@ xmlns="http://www.w3.org/TR/REC-html40">
 </head><body>
 <table border="1" cellspacing="0" cellpadding="4">
   <tr>
-    <td class="h">STT</td>
-    <td class="h">Tính chất</td>
     <td class="h">Mã hàng</td>
     <td class="h">Tên hàng</td>
     <td class="h">Đơn vị tính</td>
     <td class="h">Số lượng</td>
     <td class="h">Đơn giá</td>
-    <td class="h">Tỷ lệ chiết khấu</td>
-    <td class="h">Tiền chiết khấu</td>
-    <td class="h">Thành tiền trước thu</td>
-    <td class="h">Thuế suất</td>
-    <td class="h">Tiền thuế</td>
-    <td class="h">Tiền sau thuế</td>
+    <td class="h">Cộng tiền hàng</td>
+    <td class="h">%CK</td>
+    <td class="h">Tiền CK</td>
+    <td class="h">Thành tiền</td>
+    <td class="h">Thuế khác</td>
+    <td class="h">Tiền VAT giảm trừ</td>
+    <td class="h">Tính chất</td>
   </tr>
   $rows
 </table>
 </body></html>''';
 
       final safeName = widget.customer.name.replaceAll(RegExp(r'[^\w ]'), '').trim().replaceAll(' ', '_');
-      final fileName = 'BangKe_${safeName}_$todayFmt.xls'.replaceAll('/', '-');
+      final fileName = '${safeName}_Thang${today.month}_${today.year}.xls';
       final bytes    = Uint8List.fromList([0xEF, 0xBB, 0xBF, ...utf8.encode(html)]);
 
+      final box = context.findRenderObject() as RenderBox?;
       await Share.shareXFiles(
         [XFile.fromData(bytes, mimeType: 'application/vnd.ms-excel', name: fileName)],
         subject: 'Bảng kê ${widget.customer.name}',
+        sharePositionOrigin: box != null ? box.localToGlobal(Offset.zero) & box.size : null,
       );
     } catch (e) {
       if (mounted) showToast(context, 'Lỗi xuất file: $e', isError: true);
@@ -627,6 +645,28 @@ xmlns="http://www.w3.org/TR/REC-html40">
     final state = context.watch<AppState>();
     final items = state.bangKeFor(widget.customer.id);
     final total = items.fold(0.0, (sum, e) => sum + e.total);
+
+    // Gộp các mục cùng tên hải sản và cùng đơn giá để hiển thị
+    final grouped = <String, List<BangKeItem>>{};
+    for (final it in items) {
+      grouped.putIfAbsent('${it.seafoodName}|${it.unitPrice}', () => []).add(it);
+    }
+    final displayItems = grouped.values.map((group) {
+      final first = group.first;
+      final mergedWeight = group.fold(0.0, (sum, e) => sum + e.weight);
+      return MapEntry(
+        BangKeItem(
+          id: first.id,
+          customerId: first.customerId,
+          seafoodName: first.seafoodName,
+          unitPrice: first.unitPrice,
+          weight: mergedWeight,
+          deliveryDate: first.deliveryDate,
+          createdAt: first.createdAt,
+        ),
+        group.map((e) => e.id).toList(),
+      );
+    }).toList();
 
     return Column(children: [
       PageHeader(
@@ -776,9 +816,14 @@ xmlns="http://www.w3.org/TR/REC-html40">
               ]),
             ),
             const SizedBox(height: 4),
-            ...items.map((item) => _BangKeRow(
-              item: item,
-              onDelete: () => context.read<AppState>().deleteBangKeItem(item.id),
+            ...displayItems.map((entry) => _BangKeRow(
+              item: entry.key,
+              onDelete: () async {
+                final appState = context.read<AppState>();
+                for (final id in entry.value) {
+                  await appState.deleteBangKeItem(id);
+                }
+              },
             )),
             const SizedBox(height: 10),
             // Tổng cộng

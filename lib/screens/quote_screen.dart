@@ -814,9 +814,12 @@ class _QuoteHistoryCardState extends State<_QuoteHistoryCard> {
       // UTF-8 BOM → Word/Google Docs nhận đúng tiếng Việt
       await file.writeAsBytes([0xEF, 0xBB, 0xBF, ...utf8.encode(html)]);
 
+      if (!mounted) return;
+      final box = context.findRenderObject() as RenderBox?;
       await Share.shareXFiles(
         [XFile(file.path, mimeType: 'application/msword', name: fileName)],
         subject: 'Báo giá ${q.customerName} — ${kMonths[q.month]}/${q.year}',
+        sharePositionOrigin: box != null ? box.localToGlobal(Offset.zero) & box.size : null,
       );
     } catch (e) {
       if (mounted) showToast(context, 'Lỗi xuất file: $e', isError: true);
@@ -905,9 +908,12 @@ xmlns="http://www.w3.org/TR/REC-html40">
       final file     = File('${dir.path}/$fileName');
       await file.writeAsBytes([0xEF, 0xBB, 0xBF, ...utf8.encode(html)]);
 
+      if (!mounted) return;
+      final box = context.findRenderObject() as RenderBox?;
       await Share.shareXFiles(
         [XFile(file.path, mimeType: 'application/vnd.ms-excel', name: fileName)],
         subject: 'Báo giá ${q.customerName} — ${kMonths[q.month]}/${q.year}',
+        sharePositionOrigin: box != null ? box.localToGlobal(Offset.zero) & box.size : null,
       );
     } catch (e) {
       if (mounted) showToast(context, 'Lỗi xuất file: $e', isError: true);
