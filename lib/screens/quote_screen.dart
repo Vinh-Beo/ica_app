@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -13,7 +13,7 @@ import '../services/firebase_service.dart';
 import '../widgets/app_icon.dart';
 import '../widgets/common_widgets.dart';
 
-// ── Root screen with sub-page navigation ──────────────────────────────────────
+// â”€â”€ Root screen with sub-page navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class QuoteScreen extends StatefulWidget {
   const QuoteScreen({super.key});
   @override
@@ -34,7 +34,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
   }
 }
 
-// ── Main quote page ───────────────────────────────────────────────────────────
+// â”€â”€ Main quote page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _BaoGiaMain extends StatelessWidget {
   final VoidCallback onGotoGiaGoc;
   final VoidCallback onGotoLichSu;
@@ -45,7 +45,7 @@ class _BaoGiaMain extends StatelessWidget {
     final s     = AppStrings.of(context);
     final state = context.watch<AppState>();
     return Column(children: [
-      // ── Fixed header — nằm ngoài ListView để SingleChildScrollView không bị nested ──
+      // â”€â”€ Fixed header â€” náº±m ngoÃ i ListView Ä‘á»ƒ SingleChildScrollView khÃ´ng bá»‹ nested â”€â”€
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
         child: Column(children: [
@@ -54,7 +54,7 @@ class _BaoGiaMain extends StatelessWidget {
             Expanded(child: _ShortcutCard(
               icon: Icons.price_change_rounded, title: s.scBase,
               subtitle: '${state.seafood.length} ${s.itemsLabel}',
-              color: context.p.teal, bg: const Color(0xFFE0F7FA), onTap: onGotoGiaGoc,
+              color: kPurple, bg: const Color(0xFFE0F7FA), onTap: onGotoGiaGoc,
             )),
             const SizedBox(width: 10),
             Expanded(child: _ShortcutCard(
@@ -85,7 +85,7 @@ class _BaoGiaMain extends StatelessWidget {
             const SizedBox(height: 14),
             Text(s.quoteCustomer, style: TextStyle(fontSize: 10, color: context.p.textMuted, fontWeight: FontWeight.w800, letterSpacing: 0.8)),
             const SizedBox(height: 10),
-            // ── Horizontal scroll không nằm trong ListView → không bị intercept ──
+            // â”€â”€ Horizontal scroll khÃ´ng náº±m trong ListView â†’ khÃ´ng bá»‹ intercept â”€â”€
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -100,18 +100,18 @@ class _BaoGiaMain extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: active ? const Color(0xFFE0F7FA) : context.p.surface,
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: active ? context.p.teal : context.p.border, width: 1.5),
+                        border: Border.all(color: active ? kPurple : context.p.border, width: 1.5),
                       ),
                       child: Row(mainAxisSize: MainAxisSize.min, children: [
                         Icon(kTypeIcon[c.type]?.icon ?? Icons.storefront_rounded,
-                            color: active ? context.p.teal : (kTypeIcon[c.type]?.color ?? context.p.text2),
+                            color: active ? kPurple : (kTypeIcon[c.type]?.color ?? context.p.text2),
                             size: 13),
                         const SizedBox(width: 6),
                         Text(c.name.length > 10 ? c.name.split(' ').last : c.name,
-                            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: active ? context.p.teal : const Color(0xFF475569))),
+                            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: active ? kPurple : const Color(0xFF475569))),
                         const SizedBox(width: 4),
-                        Text('×${c.coefficient.toStringAsFixed(2)}',
-                            style: TextStyle(fontSize: 10, color: active ? context.p.teal : context.p.textMuted, fontWeight: FontWeight.w600)),
+                        Text('Ã—${c.coefficient.toStringAsFixed(2)}',
+                            style: TextStyle(fontSize: 10, color: active ? kPurple : context.p.textMuted, fontWeight: FontWeight.w600)),
                       ]),
                     ),
                   );
@@ -123,16 +123,16 @@ class _BaoGiaMain extends StatelessWidget {
         ]),
       ),
 
-      // ── Scrollable content ──
+      // â”€â”€ Scrollable content â”€â”€
       Expanded(child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
         children: [
 
-        // ── Seafood items ──
+        // â”€â”€ Seafood items â”€â”€
         if (state.pricedSeafood.isEmpty)
           SectionCard(child: Column(children: [
             const SizedBox(height: 16),
-            AppIcon(icon: Icons.price_change_rounded, color: context.p.teal, size: 52, iconSize: 26),
+            const AppIcon(icon: Icons.price_change_rounded, color: kPurple, size: 52, iconSize: 26),
             const SizedBox(height: 8),
             Text(s.noBaseGo, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
             const SizedBox(height: 6),
@@ -148,7 +148,7 @@ class _BaoGiaMain extends StatelessWidget {
               child: Row(children: [
                 OceanCheckBox(checked: state.pricedSeafood.every((sf) => state.isSelected(sf.id)), onTap: state.toggleAll),
                 const SizedBox(width: 8),
-                Text('${s.selectAll} · ${state.quoteItems.length}/${state.pricedSeafood.length} ${s.itemsLabel}',
+                Text('${s.selectAll} Â· ${state.quoteItems.length}/${state.pricedSeafood.length} ${s.itemsLabel}',
                     style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: context.p.text2)),
               ]),
             ),
@@ -168,9 +168,9 @@ class _BaoGiaMain extends StatelessWidget {
                 height: 52,
                 decoration: BoxDecoration(
                   gradient: kGradPP, borderRadius: BorderRadius.circular(26),
-                  boxShadow: [BoxShadow(color: kPurple.withOpacity(0.35), blurRadius: 18, offset: const Offset(0, 7))],
+                  boxShadow: [BoxShadow(color: kPurple.withValues(alpha: 0.35), blurRadius: 18, offset: const Offset(0, 7))],
                 ),
-                child: Center(child: Text('${s.saveQuote} — ${state.quoteItems.length} ${s.itemsLabel}',
+                child: Center(child: Text('${s.saveQuote} â€” ${state.quoteItems.length} ${s.itemsLabel}',
                     style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w800))),
               ),
             ),
@@ -244,7 +244,7 @@ class _QuoteItemRowState extends State<_QuoteItemRow> {
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.all(13),
         decoration: BoxDecoration(color: context.p.surface, borderRadius: BorderRadius.circular(16),
-            boxShadow: [BoxShadow(color: context.p.textMain.withOpacity(0.04), blurRadius: 4)]),
+            boxShadow: [BoxShadow(color: context.p.textMain.withValues(alpha: 0.04), blurRadius: 4)]),
         child: Column(children: [
           Row(children: [
             OceanCheckBox(checked: checked, onTap: () => state.toggleItem(widget.sf.id)),
@@ -254,7 +254,7 @@ class _QuoteItemRowState extends State<_QuoteItemRow> {
             const SizedBox(width: 9),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(widget.sf.name, style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: context.p.textMain)),
-              Text('Gốc: ${_fmt(base)}đ/${widget.sf.unit}', style: TextStyle(fontSize: 11, color: context.p.textMuted)),
+              Text('Gá»‘c: ${_fmt(base)}Ä‘/${widget.sf.unit}', style: TextStyle(fontSize: 11, color: context.p.textMuted)),
             ])),
             PriceLevelBadge(label: lv.label, color: lv.color, bg: lv.bg),
           ]),
@@ -301,7 +301,7 @@ class _QuoteItemRowState extends State<_QuoteItemRow> {
   void dispose() { _ctrl.dispose(); super.dispose(); }
 }
 
-// ── Giá gốc sub-page ──────────────────────────────────────────────────────────
+// â”€â”€ GiÃ¡ gá»‘c sub-page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _GiaGocPage extends StatefulWidget {
   final VoidCallback onBack;
   const _GiaGocPage({required this.onBack});
@@ -314,7 +314,7 @@ class _GiaGocPageState extends State<_GiaGocPage> {
   bool _addLoading = false;
   final _nameCtrl  = TextEditingController();
   final _priceCtrl = TextEditingController();
-  String _cat  = 'Tôm';
+  String _cat  = 'TÃ´m';
   String _unit = 'kg';
 
   @override
@@ -324,7 +324,7 @@ class _GiaGocPageState extends State<_GiaGocPage> {
     return Column(children: [
       PageHeader(
         title: s.baseTitle,
-        subtitle: '${state.seafood.length} ${s.items} · ${state.pricedSeafood.length} ${s.priced}',
+        subtitle: '${state.seafood.length} ${s.items} Â· ${state.pricedSeafood.length} ${s.priced}',
         onBack: widget.onBack,
       ),
       Expanded(child: ListView(padding: const EdgeInsets.fromLTRB(16,14,16,24), children: [
@@ -332,17 +332,17 @@ class _GiaGocPageState extends State<_GiaGocPage> {
         Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [context.p.navy, context.p.teal], begin: Alignment.topLeft, end: Alignment.bottomRight),
+            gradient: kGradPP,
             borderRadius: BorderRadius.circular(18),
           ),
           child: Stack(children: [
             const Positioned(right: -8, top: -12, child: Opacity(opacity: 0.08, child: Icon(Icons.monetization_on_rounded, size: 90, color: Colors.white))),
             Row(children: [
-              _SumItem('Tổng', '${state.seafood.length}'),
+              _SumItem('Tá»•ng', '${state.seafood.length}'),
               const SizedBox(width: 24),
-              _SumItem('Có giá', '${state.pricedSeafood.length}'),
+              _SumItem('CÃ³ giÃ¡', '${state.pricedSeafood.length}'),
               const SizedBox(width: 24),
-              _SumItem('Thiếu', '${state.seafood.length - state.pricedSeafood.length}'),
+              _SumItem('Thiáº¿u', '${state.seafood.length - state.pricedSeafood.length}'),
             ]),
           ]),
         ),
@@ -355,8 +355,8 @@ class _GiaGocPageState extends State<_GiaGocPage> {
           child: Container(
             padding: const EdgeInsets.all(13),
             decoration: BoxDecoration(color: context.p.surface, borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: context.p.teal, width: 1.5, style: BorderStyle.solid)),
-            child: Center(child: Text(s.addSeafood, style: TextStyle(color: context.p.teal, fontSize: 13, fontWeight: FontWeight.w700))),
+                border: Border.all(color: kPurple, width: 1.5, style: BorderStyle.solid)),
+            child: Center(child: Text(s.addSeafood, style: const TextStyle(color: kPurple, fontSize: 13, fontWeight: FontWeight.w700))),
           ),
         ),
       ])),
@@ -368,9 +368,9 @@ class _GiaGocPageState extends State<_GiaGocPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: context.p.surface, borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: context.p.teal, width: 1.5)),
+          border: Border.all(color: kPurple, width: 1.5)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('✦ HẢI SẢN MỚI', style: TextStyle(fontSize: 10, color: context.p.teal, fontWeight: FontWeight.w800, letterSpacing: 1)),
+        const Text('âœ¦ Háº¢I Sáº¢N Má»šI', style: TextStyle(fontSize: 10, color: kPurple, fontWeight: FontWeight.w800, letterSpacing: 1)),
         const SizedBox(height: 12),
         OceanInput(controller: _nameCtrl, hint: s.seafoodName),
         const SizedBox(height: 8),
@@ -390,7 +390,7 @@ class _GiaGocPageState extends State<_GiaGocPage> {
               final price = double.tryParse(_priceCtrl.text.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
               setState(() => _addLoading = true);
               try {
-                await state.addSeafood(Seafood(id: uid(), name: name, category: _cat, unit: _unit, icon: kCatIcons[_cat] ?? '🐡', basePrice: price));
+                await state.addSeafood(Seafood(id: uid(), name: name, category: _cat, unit: _unit, icon: kCatIcons[_cat] ?? 'ðŸ¡', basePrice: price));
                 if (!mounted) return;
                 _nameCtrl.clear(); _priceCtrl.clear();
                 setState(() { _showAdd = false; _addLoading = false; });
@@ -398,7 +398,7 @@ class _GiaGocPageState extends State<_GiaGocPage> {
               } catch (e) {
                 if (mounted) {
                   setState(() => _addLoading = false);
-                  showToast(context, 'Lỗi: $e', isError: true);
+                  showToast(context, 'Lá»—i: $e', isError: true);
                 }
               }
             },
@@ -406,7 +406,7 @@ class _GiaGocPageState extends State<_GiaGocPage> {
               duration: const Duration(milliseconds: 200),
               height: 40,
               decoration: BoxDecoration(
-                color: _addLoading ? context.p.textMuted : context.p.teal,
+                color: _addLoading ? context.p.textMuted : kPurple,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Center(child: _addLoading
@@ -418,7 +418,7 @@ class _GiaGocPageState extends State<_GiaGocPage> {
           GestureDetector(
             onTap: () => setState(() => _showAdd = false),
             child: Container(width: 40, height: 40, decoration: BoxDecoration(color: context.p.bg, borderRadius: BorderRadius.circular(20)),
-                child: Center(child: Text('✕', style: TextStyle(color: context.p.text2, fontSize: 15)))),
+                child: Center(child: Text('âœ•', style: TextStyle(color: context.p.text2, fontSize: 15)))),
           ),
         ]),
       ]),
@@ -451,7 +451,7 @@ class _SeafoodPriceRowState extends State<_SeafoodPriceRow> {
     _focusNode = FocusNode()..addListener(_onFocusChange);
   }
 
-  // Khi người dùng rời khỏi ô giá (tap sang chỗ khác / bấm back)
+  // Khi ngÆ°á»i dÃ¹ng rá»i khá»i Ã´ giÃ¡ (tap sang chá»— khÃ¡c / báº¥m back)
   void _onFocusChange() {
     if (!_focusNode.hasFocus && _debounce?.isActive == true) {
       _debounce!.cancel();
@@ -477,7 +477,7 @@ class _SeafoodPriceRowState extends State<_SeafoodPriceRow> {
     } catch (e) {
       if (mounted) {
         setState(() => _saving = false);
-        showToast(context, 'Lỗi lưu giá: $e', isError: true);
+        showToast(context, 'Lá»—i lÆ°u giÃ¡: $e', isError: true);
       }
     }
   }
@@ -497,7 +497,7 @@ class _SeafoodPriceRowState extends State<_SeafoodPriceRow> {
     final hasPriced  = widget.sf.basePrice > 0;
     final borderColor = _saved  ? const Color(0xFF15803D)
                       : _saving ? const Color(0xFFF59E0B)
-                      : hasPriced ? context.p.teal
+                      : hasPriced ? kPurple
                       : context.p.border;
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -507,7 +507,7 @@ class _SeafoodPriceRowState extends State<_SeafoodPriceRow> {
         boxShadow: [BoxShadow(color: context.p.textMain.withValues(alpha: 0.04), blurRadius: 4)],
       ),
       child: Row(children: [
-        // ── icon + name → tap để chỉnh sửa ──
+        // â”€â”€ icon + name â†’ tap Ä‘á»ƒ chá»‰nh sá»­a â”€â”€
         GestureDetector(
           onTap: _openEdit,
           child: Container(width: 40, height: 40,
@@ -525,20 +525,20 @@ class _SeafoodPriceRowState extends State<_SeafoodPriceRow> {
                     style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: context.p.textMain))),
                 Icon(Icons.edit_outlined, size: 13, color: context.p.textMuted),
               ]),
-              Text('${widget.sf.category} · ${widget.sf.unit}',
+              Text('${widget.sf.category} Â· ${widget.sf.unit}',
                   style: TextStyle(fontSize: 11, color: context.p.textMuted)),
             ]),
           ),
         ),
         const SizedBox(width: 6),
-        // ── phải: giá + xoá (hoặc confirm xoá) ──
+        // â”€â”€ pháº£i: giÃ¡ + xoÃ¡ (hoáº·c confirm xoÃ¡) â”€â”€
         if (_confirmDel) ...[
           GestureDetector(
             onTap: () => state.deleteSeafood(widget.sf.id),
             child: Container(
               height: 32, padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(color: const Color(0xFFDC2626), borderRadius: BorderRadius.circular(9)),
-              child: const Center(child: Text('Xoá', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700))),
+              child: const Center(child: Text('XoÃ¡', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700))),
             ),
           ),
           const SizedBox(width: 6),
@@ -547,7 +547,7 @@ class _SeafoodPriceRowState extends State<_SeafoodPriceRow> {
             child: Container(
               width: 32, height: 32,
               decoration: BoxDecoration(color: context.p.bg, borderRadius: BorderRadius.circular(9)),
-              child: Center(child: Text('✕', style: TextStyle(color: context.p.text2, fontSize: 13))),
+              child: Center(child: Text('âœ•', style: TextStyle(color: context.p.text2, fontSize: 13))),
             ),
           ),
         ] else ...[
@@ -568,14 +568,14 @@ class _SeafoodPriceRowState extends State<_SeafoodPriceRow> {
             keyboardType: TextInputType.number,
             textAlign: TextAlign.right,
             style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13,
-                color: hasPriced ? context.p.teal : context.p.textMain),
+                color: hasPriced ? kPurple : context.p.textMain),
             decoration: InputDecoration(
               hintText: '0',
               contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
               filled: true, fillColor: context.p.bg,
               border:        OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: borderColor)),
               enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: borderColor)),
-              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: context.p.teal, width: 1.5)),
+              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: kPurple, width: 1.5)),
             ),
             onChanged:   _onPriceChange,
             onSubmitted: (v) { _debounce?.cancel(); _savePrice(v); },
@@ -597,7 +597,7 @@ class _SeafoodPriceRowState extends State<_SeafoodPriceRow> {
   void dispose() {
     _focusNode.removeListener(_onFocusChange);
     _focusNode.dispose();
-    // Nếu debounce còn pending (user back trước 700ms), lưu ngay vào Firestore
+    // Náº¿u debounce cÃ²n pending (user back trÆ°á»›c 700ms), lÆ°u ngay vÃ o Firestore
     if (_debounce?.isActive == true) {
       _debounce!.cancel();
       final p = double.tryParse(_ctrl.text.replaceAll('.', '').replaceAll(',', '')) ?? 0;
@@ -608,7 +608,7 @@ class _SeafoodPriceRowState extends State<_SeafoodPriceRow> {
   }
 }
 
-// ── Lịch sử sub-page ─────────────────────────────────────────────────────────
+// â”€â”€ Lá»‹ch sá»­ sub-page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _LichSuPage extends StatefulWidget {
   final VoidCallback onBack;
   const _LichSuPage({required this.onBack});
@@ -673,11 +673,11 @@ class _LichSuPageState extends State<_LichSuPage> {
                 onChanged: (v) => setState(() => _fYear = v ?? 'all'))),
             ]),
             if (hasFilter) Padding(padding: const EdgeInsets.only(top: 8), child: Align(alignment: Alignment.centerLeft,
-              child: Text('Hiển thị ${filtered.length} kết quả', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: context.p.text2)))),
+              child: Text('Hiá»ƒn thá»‹ ${filtered.length} káº¿t quáº£', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: context.p.text2)))),
           ]),
         ),
       Expanded(child: state.quotes.isEmpty
-          ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [AppIcon(icon: Icons.waves_rounded, color: context.p.teal, size: 64, iconSize: 30), const SizedBox(height: 12), Text(s.noQuotes, style: TextStyle(color: context.p.textMuted, fontWeight: FontWeight.w700, fontSize: 16))]))
+          ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [const AppIcon(icon: Icons.waves_rounded, color: kPurple, size: 64, iconSize: 30), const SizedBox(height: 12), Text(s.noQuotes, style: TextStyle(color: context.p.textMuted, fontWeight: FontWeight.w700, fontSize: 16))]))
           : filtered.isEmpty
               ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [AppIcon(icon: Icons.search_off_rounded, color: context.p.textMuted, size: 60, iconSize: 28), const SizedBox(height: 12), Text(s.noTxFound, style: TextStyle(color: context.p.textMuted, fontWeight: FontWeight.w700, fontSize: 15))]))
               : ListView.builder(
@@ -776,34 +776,34 @@ class _QuoteHistoryCardState extends State<_QuoteHistoryCard> {
   .sig p{font-weight:bold;margin-bottom:60px}
 </style>
 </head><body>
-<h1>Bảng báo giá hải sản</h1>
+<h1>Báº£ng bÃ¡o giÃ¡ háº£i sáº£n</h1>
 <p class="sub">${kMonths[q.month]} / ${q.year}</p>
 <table class="info-table">
-  <tr><td>Khách hàng</td><td>${q.customerName}</td></tr>
-  <tr><td>Loại khách hàng</td><td>${q.customerType}</td></tr>
-  <tr><td>Hệ số</td><td>${q.coefficient.toStringAsFixed(2)}</td></tr>
-  <tr><td>Ngày lập</td><td>$todayFmt</td></tr>
+  <tr><td>KhÃ¡ch hÃ ng</td><td>${q.customerName}</td></tr>
+  <tr><td>Loáº¡i khÃ¡ch hÃ ng</td><td>${q.customerType}</td></tr>
+  <tr><td>Há»‡ sá»‘</td><td>${q.coefficient.toStringAsFixed(2)}</td></tr>
+  <tr><td>NgÃ y láº­p</td><td>$todayFmt</td></tr>
 </table>
 <table class="data">
   <tr>
     <th style="width:40px">STT</th>
-    <th>Mặt hàng</th>
-    <th style="width:55px">ĐVT</th>
-    <th style="width:110px">Giá gốc (đ)</th>
-    <th style="width:110px">Giá bán (đ)</th>
-    <th style="width:110px">Chênh lệch</th>
+    <th>Máº·t hÃ ng</th>
+    <th style="width:55px">ÄVT</th>
+    <th style="width:110px">GiÃ¡ gá»‘c (Ä‘)</th>
+    <th style="width:110px">GiÃ¡ bÃ¡n (Ä‘)</th>
+    <th style="width:110px">ChÃªnh lá»‡ch</th>
   </tr>
   $rows
   <tr class="sum-row">
-    <td colspan="3" style="text-align:right">TỔNG CỘNG</td>
+    <td colspan="3" style="text-align:right">Tá»”NG Cá»˜NG</td>
     <td style="text-align:right">${fmtN(q.totalBase)}</td>
     <td style="text-align:right">${fmtN(q.totalSell)}</td>
     <td style="text-align:right;color:$profitColor">$profitStr</td>
   </tr>
 </table>
 <div class="footer">
-  <div class="sig"><p>Khách hàng</p><p>........................</p></div>
-  <div class="sig"><p>Người lập báo giá</p><p>........................</p></div>
+  <div class="sig"><p>KhÃ¡ch hÃ ng</p><p>........................</p></div>
+  <div class="sig"><p>NgÆ°á»i láº­p bÃ¡o giÃ¡</p><p>........................</p></div>
 </div>
 </body></html>''';
 
@@ -811,18 +811,18 @@ class _QuoteHistoryCardState extends State<_QuoteHistoryCard> {
       final safeName = q.customerName.replaceAll(RegExp(r'[^\w ]'), '').trim().replaceAll(' ', '_');
       final fileName = 'BaoGia_${safeName}_T${q.month + 1}_${q.year}.doc';
       final file     = File('${dir.path}/$fileName');
-      // UTF-8 BOM → Word/Google Docs nhận đúng tiếng Việt
+      // UTF-8 BOM â†’ Word/Google Docs nháº­n Ä‘Ãºng tiáº¿ng Viá»‡t
       await file.writeAsBytes([0xEF, 0xBB, 0xBF, ...utf8.encode(html)]);
 
       if (!mounted) return;
       final box = context.findRenderObject() as RenderBox?;
       await Share.shareXFiles(
         [XFile(file.path, mimeType: 'application/msword', name: fileName)],
-        subject: 'Báo giá ${q.customerName} — ${kMonths[q.month]}/${q.year}',
+        subject: 'BÃ¡o giÃ¡ ${q.customerName} â€” ${kMonths[q.month]}/${q.year}',
         sharePositionOrigin: box != null ? box.localToGlobal(Offset.zero) & box.size : null,
       );
     } catch (e) {
-      if (mounted) showToast(context, 'Lỗi xuất file: $e', isError: true);
+      if (mounted) showToast(context, 'Lá»—i xuáº¥t file: $e', isError: true);
     } finally {
       if (mounted) setState(() => _exporting = false);
     }
@@ -876,25 +876,25 @@ xmlns="http://www.w3.org/TR/REC-html40">
 </style>
 </head><body>
 <table border="1" cellspacing="0" cellpadding="6">
-  <tr><td colspan="6" style="font-weight:bold;font-size:16pt;text-align:center">BẢNG BÁO GIÁ HẢI SẢN</td></tr>
+  <tr><td colspan="6" style="font-weight:bold;font-size:16pt;text-align:center">Báº¢NG BÃO GIÃ Háº¢I Sáº¢N</td></tr>
   <tr><td colspan="6" style="text-align:center">${kMonths[q.month]} / ${q.year}</td></tr>
   <tr><td colspan="6"></td></tr>
-  <tr><td class="label">Khách hàng</td><td colspan="5">${q.customerName}</td></tr>
-  <tr><td class="label">Loại khách hàng</td><td colspan="5">${q.customerType}</td></tr>
-  <tr><td class="label">Hệ số</td><td colspan="5">${q.coefficient.toStringAsFixed(2)}</td></tr>
-  <tr><td class="label">Ngày lập</td><td colspan="5">$todayFmt</td></tr>
+  <tr><td class="label">KhÃ¡ch hÃ ng</td><td colspan="5">${q.customerName}</td></tr>
+  <tr><td class="label">Loáº¡i khÃ¡ch hÃ ng</td><td colspan="5">${q.customerType}</td></tr>
+  <tr><td class="label">Há»‡ sá»‘</td><td colspan="5">${q.coefficient.toStringAsFixed(2)}</td></tr>
+  <tr><td class="label">NgÃ y láº­p</td><td colspan="5">$todayFmt</td></tr>
   <tr><td colspan="6"></td></tr>
   <tr>
     <td class="h">STT</td>
-    <td class="h">Mặt hàng</td>
-    <td class="h">ĐVT</td>
-    <td class="h">Giá gốc (đ)</td>
-    <td class="h">Giá bán (đ)</td>
-    <td class="h">Chênh lệch</td>
+    <td class="h">Máº·t hÃ ng</td>
+    <td class="h">ÄVT</td>
+    <td class="h">GiÃ¡ gá»‘c (Ä‘)</td>
+    <td class="h">GiÃ¡ bÃ¡n (Ä‘)</td>
+    <td class="h">ChÃªnh lá»‡ch</td>
   </tr>
   $rows
   <tr>
-    <td class="sum" colspan="3" style="text-align:right">TỔNG CỘNG</td>
+    <td class="sum" colspan="3" style="text-align:right">Tá»”NG Cá»˜NG</td>
     <td class="sum">${fmtN(q.totalBase)}</td>
     <td class="sum">${fmtN(q.totalSell)}</td>
     <td class="sum">${q.profit >= 0 ? "+" : ""}${fmtN(q.profit)}</td>
@@ -912,17 +912,16 @@ xmlns="http://www.w3.org/TR/REC-html40">
       final box = context.findRenderObject() as RenderBox?;
       await Share.shareXFiles(
         [XFile(file.path, mimeType: 'application/vnd.ms-excel', name: fileName)],
-        subject: 'Báo giá ${q.customerName} — ${kMonths[q.month]}/${q.year}',
+        subject: 'BÃ¡o giÃ¡ ${q.customerName} â€” ${kMonths[q.month]}/${q.year}',
         sharePositionOrigin: box != null ? box.localToGlobal(Offset.zero) & box.size : null,
       );
     } catch (e) {
-      if (mounted) showToast(context, 'Lỗi xuất file: $e', isError: true);
+      if (mounted) showToast(context, 'Lá»—i xuáº¥t file: $e', isError: true);
     } finally {
       if (mounted) setState(() => _exportingExcel = false);
     }
   }
 
-  @override
   Widget _statCell(BuildContext context, {required String label, required String value, required Color color}) =>
     Expanded(child: Column(children: [
       Text(value, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: color),
@@ -934,7 +933,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
 
   Widget _vDivider(BuildContext context) =>
     Container(width: 1, height: 28, margin: const EdgeInsets.symmetric(horizontal: 4),
-        color: context.p.border.withOpacity(0.5));
+        color: context.p.border.withValues(alpha: 0.5));
 
   @override
   Widget build(BuildContext context) {
@@ -947,13 +946,13 @@ xmlns="http://www.w3.org/TR/REC-html40">
         color: context.p.surface,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
-          BoxShadow(color: const Color(0xFF0E7C8C).withOpacity(0.13), blurRadius: 22, offset: const Offset(0, 8)),
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 4, offset: const Offset(0, 2)),
+          BoxShadow(color: const Color(0xFF0E7C8C).withValues(alpha: 0.13), blurRadius: 22, offset: const Offset(0, 8)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 4, offset: const Offset(0, 2)),
         ],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
-        // ── Gradient header ──
+        // â”€â”€ Gradient header â”€â”€
         Container(
           padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
           decoration: const BoxDecoration(
@@ -967,7 +966,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
             Row(children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), borderRadius: BorderRadius.circular(20)),
+                decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(20)),
                 child: Text('${kMonths[q.month]} / ${q.year}'.toUpperCase(),
                     style: const TextStyle(fontSize: 9, color: Colors.white70, fontWeight: FontWeight.w800, letterSpacing: 1.0)),
               ),
@@ -983,7 +982,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
                 child: Container(
                   width: 28, height: 28,
                   decoration: BoxDecoration(
-                    color: _confirmDel ? const Color(0xFFDC2626) : const Color(0xFFDC2626).withOpacity(0.75),
+                    color: _confirmDel ? const Color(0xFFDC2626) : const Color(0xFFDC2626).withValues(alpha: 0.75),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -1001,27 +1000,27 @@ xmlns="http://www.w3.org/TR/REC-html40">
               if (q.customerType.isNotEmpty) ...[
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.18), borderRadius: BorderRadius.circular(10)),
+                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.18), borderRadius: BorderRadius.circular(10)),
                   child: Text(q.customerType,
-                      style: TextStyle(fontSize: 11, color: Colors.white.withOpacity(0.9), fontWeight: FontWeight.w700)),
+                      style: TextStyle(fontSize: 11, color: Colors.white.withValues(alpha: 0.9), fontWeight: FontWeight.w700)),
                 ),
                 const SizedBox(width: 8),
               ],
-              Text('× ${q.coefficient.toStringAsFixed(2)}',
-                  style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6), fontWeight: FontWeight.w600)),
+              Text('Ã— ${q.coefficient.toStringAsFixed(2)}',
+                  style: TextStyle(fontSize: 12, color: Colors.white.withValues(alpha: 0.6), fontWeight: FontWeight.w600)),
             ]),
           ]),
         ),
 
-        // ── Stats row ──
+        // â”€â”€ Stats row â”€â”€
         Padding(
           padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
           child: Row(children: [
-            _statCell(context, label: s.statItems, value: '${q.items.length} ${s.itemsLabel}', color: context.p.teal),
+            _statCell(context, label: s.statItems, value: '${q.items.length} ${s.itemsLabel}', color: kPurple),
             _vDivider(context),
             _statCell(context,
               label: s.statProfit,
-              value: '${q.profit >= 0 ? "+" : "−"}${fmtK(q.profit.abs())}đ',
+              value: '${q.profit >= 0 ? "+" : "âˆ’"}${fmtK(q.profit.abs())}Ä‘',
               color: q.profit >= 0 ? const Color(0xFF15803D) : const Color(0xFFDC2626)),
             _vDivider(context),
             _statCell(context, label: s.statBase, value: fmtK(q.totalBase), color: context.p.text2),
@@ -1030,10 +1029,10 @@ xmlns="http://www.w3.org/TR/REC-html40">
           ]),
         ),
 
-        Container(height: 1, margin: const EdgeInsets.symmetric(horizontal: 14), color: context.p.border.withOpacity(0.4)),
+        Container(height: 1, margin: const EdgeInsets.symmetric(horizontal: 14), color: context.p.border.withValues(alpha: 0.4)),
         const SizedBox(height: 12),
 
-        // ── Items ──
+        // â”€â”€ Items â”€â”€
         ...q.items.map((it) => Padding(
           padding: const EdgeInsets.fromLTRB(14, 0, 14, 8),
           child: Row(children: [
@@ -1060,7 +1059,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
 
         const SizedBox(height: 10),
 
-        // ── Actions ──
+        // â”€â”€ Actions â”€â”€
         Padding(
           padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
           child: Column(children: [
@@ -1106,12 +1105,12 @@ xmlns="http://www.w3.org/TR/REC-html40">
                 decoration: BoxDecoration(
                   color: const Color(0xFFFEF2F2),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFDC2626).withOpacity(0.2)),
+                  border: Border.all(color: const Color(0xFFDC2626).withValues(alpha: 0.2)),
                 ),
                 child: Row(children: [
                   const Icon(Icons.warning_amber_rounded, size: 15, color: Color(0xFFDC2626)),
                   const SizedBox(width: 8),
-                  const Expanded(child: Text('Xóa báo giá này?',
+                  const Expanded(child: Text('XÃ³a bÃ¡o giÃ¡ nÃ y?',
                       style: TextStyle(fontSize: 12, color: Color(0xFFDC2626), fontWeight: FontWeight.w700))),
                   GestureDetector(
                     onTap: () { context.read<AppState>().deleteQuote(q.id); showToast(context, s.deleteDebtToast); },
@@ -1140,7 +1139,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
   }
 }
 
-// ── Helper widgets ────────────────────────────────────────────────────────────
+// â”€â”€ Helper widgets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _ShortcutCard extends StatelessWidget {
   final IconData icon;
   final String title, subtitle;
@@ -1235,7 +1234,7 @@ class _SumItem extends StatelessWidget {
   ]);
 }
 
-// ── Edit sheet (bottom sheet) ─────────────────────────────────────────────────
+// â”€â”€ Edit sheet (bottom sheet) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class _SeafoodEditSheet extends StatefulWidget {
   final Seafood sf;
   const _SeafoodEditSheet({required this.sf});
@@ -1271,7 +1270,7 @@ class _SeafoodEditSheetState extends State<_SeafoodEditSheet> {
       await context.read<AppState>().updateSeafood(
         widget.sf.copyWith(
           name: name, category: _cat, unit: _unit,
-          icon: kCatIcons[_cat] ?? '🐡', basePrice: price,
+          icon: kCatIcons[_cat] ?? 'ðŸ¡', basePrice: price,
         ),
       );
       if (!mounted) return;
@@ -1280,7 +1279,7 @@ class _SeafoodEditSheetState extends State<_SeafoodEditSheet> {
     } catch (e) {
       if (mounted) {
         setState(() => _saving = false);
-        showToast(context, 'Lỗi: $e', isError: true);
+        showToast(context, 'Lá»—i: $e', isError: true);
       }
     }
   }
@@ -1306,28 +1305,28 @@ class _SeafoodEditSheetState extends State<_SeafoodEditSheet> {
             duration: const Duration(milliseconds: 200),
             width: 42, height: 42,
             decoration: BoxDecoration(color: const Color(0xFFEEF6F7), borderRadius: BorderRadius.circular(12)),
-            child: Center(child: Text(kCatIcons[_cat] ?? '🐡', style: const TextStyle(fontSize: 22))),
+            child: Center(child: Text(kCatIcons[_cat] ?? 'ðŸ¡', style: const TextStyle(fontSize: 22))),
           ),
           const SizedBox(width: 12),
           Text(s.editSeafood, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: context.p.textMain)),
         ]),
         const SizedBox(height: 16),
-        // tên
+        // tÃªn
         FieldLabel(s.seafoodName),
         OceanInput(controller: _nameCtrl, hint: s.seafoodHint),
         const SizedBox(height: 10),
-        // danh mục + đơn vị
+        // danh má»¥c + Ä‘Æ¡n vá»‹
         Row(children: [
           Expanded(child: _CatDropdown(value: _cat, onChanged: (v) => setState(() => _cat = v!))),
           const SizedBox(width: 8),
           Expanded(child: _UnitDropdown(value: _unit, onChanged: (v) => setState(() => _unit = v!))),
         ]),
         const SizedBox(height: 10),
-        // giá gốc
+        // giÃ¡ gá»‘c
         FieldLabel(s.basePrice),
         OceanInput(controller: _priceCtrl, hint: '0', keyboardType: TextInputType.number),
         const SizedBox(height: 16),
-        // nút
+        // nÃºt
         Row(children: [
           Expanded(child: GestureDetector(
             onTap: _saving ? null : _save,
@@ -1347,7 +1346,7 @@ class _SeafoodEditSheetState extends State<_SeafoodEditSheet> {
                       SizedBox(width: 16, height: 16,
                           child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)),
                       SizedBox(width: 8),
-                      Text('Đang lưu...', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14)),
+                      Text('Äang lÆ°u...', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14)),
                     ])
                   : Text(s.save, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 15))),
             ),
@@ -1358,7 +1357,7 @@ class _SeafoodEditSheetState extends State<_SeafoodEditSheet> {
             child: Container(
               width: 48, height: 48,
               decoration: BoxDecoration(color: context.p.bg, borderRadius: BorderRadius.circular(24)),
-              child: Center(child: Text('✕', style: TextStyle(color: context.p.text2, fontSize: 17))),
+              child: Center(child: Text('âœ•', style: TextStyle(color: context.p.text2, fontSize: 17))),
             ),
           ),
         ]),
@@ -1369,3 +1368,4 @@ class _SeafoodEditSheetState extends State<_SeafoodEditSheet> {
   @override
   void dispose() { _nameCtrl.dispose(); _priceCtrl.dispose(); super.dispose(); }
 }
+
