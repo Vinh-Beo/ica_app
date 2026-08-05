@@ -1,9 +1,11 @@
 // ── KHÁCH HÀNG ────────────────────────────────────────────────────────────────
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../app_state.dart';
@@ -594,88 +596,168 @@ class _BangKePageState extends State<_BangKePage> {
     if (_exporting || items.isEmpty) return;
     setState(() => _exporting = true);
     try {
-      String fmtW(double v) => v % 1 == 0 ? v.toInt().toString() : v.toString();
-
-      // Gộp số lượng các mục cùng tên hải sản và cùng đơn giá
+      // Gộp các mục cùng tên hải sản và cùng đơn giá
       final merged = <String, BangKeItem>{};
       for (final it in items) {
         final key = '${it.seafoodName}|${it.unitPrice}';
-        final existing = merged[key];
-        merged[key] = existing == null
-            ? it
-            : BangKeItem(
-                id: existing.id,
-                customerId: existing.customerId,
-                seafoodName: existing.seafoodName,
-                unitPrice: existing.unitPrice,
-                weight: existing.weight + it.weight,
-                deliveryDate: existing.deliveryDate,
-                createdAt: existing.createdAt,
-              );
+        final prev = merged[key];
+        merged[key] = prev == null ? it : BangKeItem(
+          id: prev.id, customerId: prev.customerId,
+          seafoodName: prev.seafoodName, unitPrice: prev.unitPrice,
+          weight: prev.weight + it.weight,
+          deliveryDate: prev.deliveryDate, createdAt: prev.createdAt,
+        );
       }
-      final mergedItems = merged.values.toList();
+      final rows = merged.values.toList();
 
-      final rows = StringBuffer();
-      for (int i = 0; i < mergedItems.length; i++) {
-        final it = mergedItems[i];
-        final t  = it.total.round();
-        rows.write('<tr>'
-            '<td></td>'
-            '<td>${it.seafoodName}</td>'
-            '<td>KG</td>'
-            '<td>${fmtW(it.weight)}</td>'
-            '<td>${it.unitPrice.round()}</td>'
-            '<td>$t</td>'
-            '<td>0</td>'
-            '<td>0</td>'
-            '<td>$t</td>'
-            '<td>0</td>'
-            '<td>0</td>'
-            '<td>1</td>'
-            '</tr>');
+      String esc(String v) => v.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+      String numCell(num v, {String style = 's2'}) =>
+          '<Cell ss:StyleID="$style"><Data ss:Type="Number">$v</Data></Cell>';
+      String strCell(String v, {String style = 's2'}) =>
+          '<Cell ss:StyleID="$style"><Data ss:Type="String">${esc(v)}</Data></Cell>';
+      String hdrCell(String v) =>
+          '<Cell ss:StyleID="s1"><Data ss:Type="String">${esc(v)}</Data></Cell>';
+
+      final dataRows = StringBuffer();
+      for (final it in rows) {
+        final t = it.total.round();
+        final w = it.weight % 1 == 0 ? it.weight.toInt() : it.weight;
+        dataRows.write('<Row>'
+            '${strCell('')}'
+            '${strCell(it.seafoodName)}'
+            '${strCell('KG')}'
+            '${numCell(w)}'
+            '${numCell(it.unitPrice.round())}'
+            '${numCell(t)}'
+            '${numCell(0)}'
+            '${numCell(0)}'
+            '${numCell(t)}'
+            '${numCell(0)}'
+            '${numCell(0)}'
+            '${numCell(1)}'
+            '</Row>');
       }
 
-      final today = DateTime.now();
+      // Tổng cộng
+      final grandTotal = rows.fold(0, (s, e) => s + e.total.round());
+      dataRows.write('<Row>'
+          '${strCell('')}'
+          '${strCell('TỔNG CỘNG', style: 's3')}'
+          '${strCell('', style: 's3')}'
+          '${strCell('', style: 's3')}'
+          '${strCell('', style: 's3')}'
+          '${numCell(grandTotal, style: 's3')}'
+          '${strCell('', style: 's3')}'
+          '${strCell('', style: 's3')}'
+          '${numCell(grandTotal, style: 's3')}'
+          '${strCell('', style: 's3')}'
+          '${strCell('', style: 's3')}'
+          '${strCell('', style: 's3')}'
+          '</Row>');
 
-      final html = '''<html xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:x="urn:schemas-microsoft-com:office:excel"
-xmlns="http://www.w3.org/TR/REC-html40">
-<head><meta charset="UTF-8">
-<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets>
-<x:ExcelWorksheet><x:Name>Bang ke</x:Name>
-<x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
-</x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
-<style>
-  td { font-family: Arial, sans-serif; font-size: 11pt; border: 1px solid #000; }
-  .h { font-weight: bold; text-align: center; background: #f2f2f2; }
-</style>
-</head><body>
-<table border="1" cellspacing="0" cellpadding="4">
-  <tr>
-    <td class="h">Mã hàng</td>
-    <td class="h">Tên hàng</td>
-    <td class="h">Đơn vị tính</td>
-    <td class="h">Số lượng</td>
-    <td class="h">Đơn giá</td>
-    <td class="h">Cộng tiền hàng</td>
-    <td class="h">%CK</td>
-    <td class="h">Tiền CK</td>
-    <td class="h">Thành tiền</td>
-    <td class="h">Thuế khác</td>
-    <td class="h">Tiền VAT giảm trừ</td>
-    <td class="h">Tính chất</td>
-  </tr>
-  $rows
-</table>
-</body></html>''';
+      // +1 header row, +1 total row
+      final rowCount  = rows.length + 2;
+      const colCount  = 12;
+
+      final today    = DateTime.now();
+      final xml = '''<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+ <Styles>
+  <Style ss:ID="s1">
+   <Font ss:Bold="1" ss:Size="11"/>
+   <Interior ss:Color="#F2F2F2" ss:Pattern="Solid"/>
+   <Alignment ss:Horizontal="Center" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left"   ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right"  ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top"    ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s2">
+   <Font ss:Size="11"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left"   ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right"  ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top"    ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="s3">
+   <Font ss:Bold="1" ss:Size="11"/>
+   <Interior ss:Color="#EDE9FE" ss:Pattern="Solid"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left"   ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right"  ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top"    ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Bang ke">
+  <Table ss:ExpandedColumnCount="$colCount" ss:ExpandedRowCount="$rowCount" x:FullColumns="1" x:FullRows="1">
+   <Column ss:Width="60"/>
+   <Column ss:Width="130"/>
+   <Column ss:Width="70"/>
+   <Column ss:Width="70"/>
+   <Column ss:Width="85"/>
+   <Column ss:Width="100"/>
+   <Column ss:Width="50"/>
+   <Column ss:Width="80"/>
+   <Column ss:Width="100"/>
+   <Column ss:Width="70"/>
+   <Column ss:Width="110"/>
+   <Column ss:Width="70"/>
+   <Row>
+    ${hdrCell('Mã hàng')}
+    ${hdrCell('Tên hàng')}
+    ${hdrCell('Đơn vị tính')}
+    ${hdrCell('Số lượng')}
+    ${hdrCell('Đơn giá')}
+    ${hdrCell('Cộng tiền hàng')}
+    ${hdrCell('%CK')}
+    ${hdrCell('Tiền CK')}
+    ${hdrCell('Thành tiền')}
+    ${hdrCell('Thuế khác')}
+    ${hdrCell('Tiền VAT giảm trừ')}
+    ${hdrCell('Tính chất')}
+   </Row>
+   $dataRows
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Layout x:Orientation="Landscape"/>
+   </PageSetup>
+   <FreezePanes/>
+   <FrozenNoSplit/>
+   <SplitHorizontal>1</SplitHorizontal>
+   <TopRowBottomPane>1</TopRowBottomPane>
+   <ActivePane>2</ActivePane>
+  </WorksheetOptions>
+ </Worksheet>
+</Workbook>''';
 
       final safeName = widget.customer.name.replaceAll(RegExp(r'[^\w ]'), '').trim().replaceAll(' ', '_');
       final fileName = '${safeName}_Thang${today.month}_${today.year}.xls';
-      final bytes    = Uint8List.fromList([0xEF, 0xBB, 0xBF, ...utf8.encode(html)]);
+      final bytes    = Uint8List.fromList(utf8.encode(xml));
+
+      XFile xFile;
+      try {
+        final dir  = await getTemporaryDirectory();
+        final file = File('${dir.path}/$fileName');
+        await file.writeAsBytes(bytes);
+        xFile = XFile(file.path, mimeType: 'application/vnd.ms-excel', name: fileName);
+      } catch (_) {
+        xFile = XFile.fromData(bytes, mimeType: 'application/vnd.ms-excel', name: fileName);
+      }
 
       final box = context.findRenderObject() as RenderBox?;
       await Share.shareXFiles(
-        [XFile.fromData(bytes, mimeType: 'application/vnd.ms-excel', name: fileName)],
+        [xFile],
         subject: 'Bảng kê ${widget.customer.name}',
         sharePositionOrigin: box != null ? box.localToGlobal(Offset.zero) & box.size : null,
       );
