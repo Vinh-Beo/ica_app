@@ -364,68 +364,90 @@ class _BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final unread = context.watch<AppState>().unreadCount;
-    final bottom = MediaQuery.of(context).padding.bottom;
-    return Container(
-      decoration: BoxDecoration(
-        color: context.p.surface,
-        border: Border.all(color: context.p.border, width: 1),
-        boxShadow: [BoxShadow(color: context.p.textMain.withValues(alpha: 0.08), blurRadius: 12, offset: const Offset(0, -2))],
-      ),
-      padding: EdgeInsets.only(bottom: bottom > 0 ? bottom : 8, top: 4),
-      child: Row(
-        children: List.generate(_icons.length, (i) {
-          final active    = currentTab == i;
-          final showBadge = i == 4 && unread > 0;
-          final iconData  = active ? _icons[i].active : _icons[i].inactive;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final pillBg = isDark ? const Color(0xFF1C1C1E) : context.p.surface;
 
-          return Expanded(
-            child: GestureDetector(
-              onTap: () => onTap(i),
-              behavior: HitTestBehavior.opaque,
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                // top indicator spanning full column
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 220),
-                  height: 3,
-                  decoration: BoxDecoration(
-                    color: active ? const Color(0xFF7C3AED) : Colors.transparent,
-                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(3)),
-                  ),
+    return ColoredBox(
+      color: context.p.bg,
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 4, 20, 4),
+          child: Container(
+            height: 62,
+            decoration: BoxDecoration(
+              color: pillBg,
+              borderRadius: BorderRadius.circular(36),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.12),
+                  blurRadius: 24,
+                  offset: const Offset(0, 6),
                 ),
-                const SizedBox(height: 10),
-                // icon + badge
-                Stack(clipBehavior: Clip.none, alignment: Alignment.center, children: [
-                  TweenAnimationBuilder<double>(
-                    tween: Tween(begin: active ? 0.0 : 1.0, end: active ? 1.0 : 0.0),
-                    duration: const Duration(milliseconds: 200),
-                    builder: (_, t, __) => Icon(
-                      iconData,
-                      size: active ? 28 : 24,
-                      color: Color.lerp(context.p.textMuted, const Color(0xFF7C3AED), t),
+              ],
+            ),
+            child: Row(
+              children: List.generate(_icons.length, (i) {
+                final active    = currentTab == i;
+                final showBadge = i == 4 && unread > 0;
+                final iconData  = active ? _icons[i].active : _icons[i].inactive;
+
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: () => onTap(i),
+                    behavior: HitTestBehavior.opaque,
+                    child: SizedBox(
+                      height: 62,
+                      child: Stack(alignment: Alignment.center, clipBehavior: Clip.none, children: [
+                        // active pill highlight
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 220),
+                          width: active ? 46 : 0,
+                          height: active ? 38 : 0,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF7C3AED).withValues(alpha: isDark ? 0.22 : 0.12),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        // icon
+                        TweenAnimationBuilder<double>(
+                          tween: Tween(end: active ? 1.0 : 0.0),
+                          duration: const Duration(milliseconds: 200),
+                          builder: (_, t, __) => Icon(
+                            iconData,
+                            size: 25,
+                            color: Color.lerp(
+                              isDark ? Colors.white.withValues(alpha: 0.45) : context.p.textMuted,
+                              const Color(0xFF7C3AED),
+                              t,
+                            ),
+                          ),
+                        ),
+                        // badge
+                        if (showBadge)
+                          Positioned(
+                            top: 10, right: 8,
+                            child: Container(
+                              constraints: const BoxConstraints(minWidth: 16),
+                              height: 16,
+                              padding: const EdgeInsets.symmetric(horizontal: 3),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFDC2626),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: pillBg, width: 2),
+                              ),
+                              child: Center(child: Text(unread > 9 ? '9+' : '$unread',
+                                  style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w800))),
+                            ),
+                          ),
+                      ]),
                     ),
                   ),
-                  if (showBadge)
-                    Positioned(
-                      top: -5, right: -8,
-                      child: Container(
-                        constraints: const BoxConstraints(minWidth: 16),
-                        height: 16,
-                        padding: const EdgeInsets.symmetric(horizontal: 3),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFDC2626),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: context.p.surface, width: 2),
-                        ),
-                        child: Center(child: Text(unread > 9 ? '9+' : '$unread',
-                            style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w800))),
-                      ),
-                    ),
-                ]),
-                const SizedBox(height: 10),
-              ]),
+                );
+              }),
             ),
-          );
-        }),
+          ),
+        ),
       ),
     );
   }
@@ -544,15 +566,15 @@ class _ChangePasswordSheetState extends State<_ChangePasswordSheet> {
             Text('Thay đổi mật khẩu', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: context.p.textMain)),
           ]),
           const SizedBox(height: 20),
-          FieldLabel('Mật khẩu hiện tại'),
+          const FieldLabel('Mật khẩu hiện tại'),
           OceanInput(hint: '••••••••', controller: _curCtrl, obscureText: !_showCur,
               suffix: eyeBtn(_showCur, () => setState(() => _showCur = !_showCur))),
           const SizedBox(height: 10),
-          FieldLabel('Mật khẩu mới'),
+          const FieldLabel('Mật khẩu mới'),
           OceanInput(hint: '••••••••', controller: _newCtrl, obscureText: !_showNew,
               suffix: eyeBtn(_showNew, () => setState(() => _showNew = !_showNew))),
           const SizedBox(height: 10),
-          FieldLabel('Xác nhận mật khẩu mới'),
+          const FieldLabel('Xác nhận mật khẩu mới'),
           OceanInput(hint: '••••••••', controller: _conCtrl, obscureText: !_showCon,
               suffix: eyeBtn(_showCon, () => setState(() => _showCon = !_showCon))),
           const SizedBox(height: 24),
