@@ -125,9 +125,7 @@ class _CustomerCardState extends State<_CustomerCard> {
     if (!mounted) return;
     setState(() => _uploading = true);
     try {
-      await appState
-          .updateCustomerAvatar(widget.customer.id, bytes)
-          .timeout(const Duration(seconds: 30));
+      await appState.updateCustomerAvatar(widget.customer.id, bytes);
     } catch (e) {
       if (mounted) {
         final s = AppStrings.readFrom(context);
@@ -143,8 +141,10 @@ class _CustomerCardState extends State<_CustomerCard> {
     final s        = AppStrings.of(context);
     final state    = context.watch<AppState>();
     final c        = state.customers.firstWhere((x) => x.id == widget.customer.id, orElse: () => widget.customer);
-    final pricedSf = state.pricedSeafood;
-    final totalSell = pricedSf.fold(0.0, (sum, sf) => sum + state.getSellPriceFor(c.id, sf.id, sf.basePrice));
+    final allPricedSf = state.pricedSeafood;
+    final pricedSf    = allPricedSf.where((sf) => !c.excludedSeafoodIds.contains(sf.id)).toList();
+    final hiddenCount = allPricedSf.length - pricedSf.length;
+    final totalSell   = pricedSf.fold(0.0, (sum, sf) => sum + state.getSellPriceFor(c.id, sf.id, sf.basePrice));
     final typeStyle = kTypeIcon[c.type];
 
     return Container(
@@ -226,14 +226,39 @@ class _CustomerCardState extends State<_CustomerCard> {
               Padding(padding: const EdgeInsets.all(10), child: Text(s.noBaseTbl, style: const TextStyle(fontSize: 11, color: Color(0xFFCBD5E1)), textAlign: TextAlign.center))
             else ...pricedSf.asMap().entries.map((entry) => Container(
               decoration: BoxDecoration(border: entry.key > 0 ? const Border(top: BorderSide(color: Color(0xFFF4F7F8))) : null),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+              padding: const EdgeInsets.fromLTRB(10, 5, 6, 5),
               child: Row(children: [
                 Expanded(child: Text('${entry.value.icon} ${entry.value.name}', style: const TextStyle(fontSize: 11, color: Color(0xFF475569), fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis)),
                 SizedBox(width: 60, child: Text(fmtK(entry.value.basePrice), textAlign: TextAlign.right, style: TextStyle(fontSize: 11, color: context.p.textMuted))),
                 SizedBox(width: 76, child: Text(fmtK(state.getSellPriceFor(c.id, entry.value.id, entry.value.basePrice)), textAlign: TextAlign.right, style: TextStyle(fontSize: 11, color: context.p.teal, fontWeight: FontWeight.w800))),
+                const SizedBox(width: 6),
+                GestureDetector(
+                  onTap: () => state.toggleExcludedSeafood(c.id, entry.value.id),
+                  child: const Icon(Icons.remove_circle_outline_rounded, size: 15, color: Color(0xFFDC2626)),
+                ),
               ]),
             )),
           ])),
+          if (hiddenCount > 0) ...[
+            const SizedBox(height: 6),
+            GestureDetector(
+              onTap: () {
+                final excluded = List<String>.from(c.excludedSeafoodIds);
+                for (final id in excluded) { state.toggleExcludedSeafood(c.id, id); }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(color: const Color(0xFFFEF2F2), borderRadius: BorderRadius.circular(10)),
+                child: Row(children: [
+                  const Icon(Icons.visibility_off_outlined, size: 12, color: Color(0xFFDC2626)),
+                  const SizedBox(width: 6),
+                  Text('Đang ẩn $hiddenCount mặt hàng', style: const TextStyle(fontSize: 10, color: Color(0xFFDC2626), fontWeight: FontWeight.w600)),
+                  const Spacer(),
+                  const Text('Khôi phục', style: TextStyle(fontSize: 10, color: Color(0xFFDC2626), fontWeight: FontWeight.w800)),
+                ]),
+              ),
+            ),
+          ],
           const SizedBox(height: 8),
           Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(color: const Color(0xFFE0F7FA), borderRadius: BorderRadius.circular(10)),

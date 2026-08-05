@@ -183,7 +183,7 @@ class FirebaseService {
   Future<String> addCustomer(Customer c, {Uint8List? avatarBytes}) async {
     final ref = await _col('customers').add(c.toMap());
     if (avatarBytes != null) {
-      final url = await _uploadImage('avatars/${ref.id}.jpg', avatarBytes);
+      final url = await _uploadImage('avatar_cust_${ref.id}.jpg', avatarBytes);
       await ref.update({'avatarUrl': url});
     }
     return ref.id;
@@ -193,17 +193,19 @@ class FirebaseService {
     final data = c.toMap();
     if (newAvatarBytes != null) {
       data['avatarUrl'] =
-          await _uploadImage('avatars/${c.id}.jpg', newAvatarBytes);
+          await _uploadImage('avatar_cust_${c.id}.jpg', newAvatarBytes);
     }
     await _col('customers').doc(c.id.toString()).update(data);
   }
 
+  Future<void> updateCustomerExcluded(String custId, List<String> ids) =>
+      _col('customers').doc(custId).update({'excludedSeafoodIds': ids});
+
   /// Chỉ cập nhật avatar — không đụng đến các field khác.
   Future<void> updateCustomerAvatar(String customerId, Uint8List bytes) async {
-    final ref  = _storage.ref('users/$uid/avatars/$customerId.jpg');
-    final snap = await ref.putData(bytes, SettableMetadata(contentType: 'image/jpeg'));
-    final url  = await snap.ref.getDownloadURL();
-    await _col('customers').doc(customerId).update({'avatarUrl': url});
+    final url = await _uploadImage('avatar_cust_$customerId.jpg', bytes);
+    await _col('customers').doc(customerId)
+        .set({'avatarUrl': url}, SetOptions(merge: true));
   }
 
   Future<void> updateCoefficient(String customerId, double coeff) =>
@@ -211,7 +213,7 @@ class FirebaseService {
 
   Future<void> deleteCustomer(String customerId) async {
     await _col('customers').doc(customerId).delete();
-    await _deleteImageSafe('avatars/$customerId.jpg');
+    await _deleteImageSafe('avatar_cust_$customerId.jpg');
   }
 
   // ════════════════════════════════════════════════════════════════════════════

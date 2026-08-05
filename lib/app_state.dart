@@ -197,6 +197,13 @@ class AppState extends ChangeNotifier {
   Future<void> updateCustomer(Customer c, {Uint8List? newAvatarBytes}) =>
       _fb.updateCustomer(c, newAvatarBytes: newAvatarBytes);
   Future<void> updateCustomerInfo(Customer c) => _fb.updateCustomer(c);
+
+  Future<void> toggleExcludedSeafood(String custId, String sfId) {
+    final c = customers.firstWhere((c) => c.id == custId);
+    final ids = List<String>.from(c.excludedSeafoodIds);
+    if (ids.contains(sfId)) { ids.remove(sfId); } else { ids.add(sfId); }
+    return _fb.updateCustomerExcluded(custId, ids);
+  }
   Future<void> updateCustomerAvatar(String customerId, Uint8List bytes) =>
       _fb.updateCustomerAvatar(customerId, bytes);
 

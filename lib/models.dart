@@ -16,6 +16,7 @@ class Customer {
   String? avatarUrl;
   String? address;
   String? taxCode;
+  List<String> excludedSeafoodIds;
 
   Customer({
     required this.id,
@@ -25,7 +26,8 @@ class Customer {
     this.avatarUrl,
     this.address,
     this.taxCode,
-  });
+    List<String>? excludedSeafoodIds,
+  }) : excludedSeafoodIds = excludedSeafoodIds ?? [];
 
   Map<String, dynamic> toMap() => {
         'name': name,
@@ -34,6 +36,7 @@ class Customer {
         'avatarUrl': avatarUrl,
         'address': address,
         'taxCode': taxCode,
+        'excludedSeafoodIds': excludedSeafoodIds,
       };
 
   factory Customer.fromMap(String id, Map<String, dynamic> m) => Customer(
@@ -44,11 +47,13 @@ class Customer {
         avatarUrl: m['avatarUrl'],
         address: m['address'],
         taxCode: m['taxCode'],
+        excludedSeafoodIds: List<String>.from(m['excludedSeafoodIds'] ?? []),
       );
 
   Customer copyWith({
     String? name, String? type, double? coefficient,
     String? avatarUrl, String? address, String? taxCode,
+    List<String>? excludedSeafoodIds,
   }) => Customer(
         id: id,
         name: name ?? this.name,
@@ -57,6 +62,7 @@ class Customer {
         avatarUrl: avatarUrl ?? this.avatarUrl,
         address: address ?? this.address,
         taxCode: taxCode ?? this.taxCode,
+        excludedSeafoodIds: excludedSeafoodIds ?? this.excludedSeafoodIds,
       );
 }
 
