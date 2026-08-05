@@ -114,6 +114,7 @@ class _CustomerCard extends StatefulWidget {
 class _CustomerCardState extends State<_CustomerCard> {
   bool _isConfirmDel = false;
   bool _uploading    = false;
+  bool _showPrices   = false;
 
   Future<void> _pickAvatar() async {
     final appState = context.read<AppState>();
@@ -210,7 +211,8 @@ class _CustomerCardState extends State<_CustomerCard> {
                 child: Center(child: Icon(Icons.edit_rounded, size: 14, color: context.p.text2)))),
         ])),
 
-        // ── price table ──
+        // ── price table (collapsible) ──
+        if (_showPrices)
         Padding(padding: const EdgeInsets.fromLTRB(14, 10, 14, 10), child: Column(children: [
           Container(decoration: BoxDecoration(border: Border.all(color: context.p.border), borderRadius: BorderRadius.circular(12)), child: Column(children: [
             Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -257,6 +259,26 @@ class _CustomerCardState extends State<_CustomerCard> {
                 const Icon(Icons.list_alt_rounded, size: 13, color: Color(0xFF7C3AED)),
                 const SizedBox(width: 4),
                 Text(s.bangKeBtn, style: const TextStyle(color: Color(0xFF7C3AED), fontSize: 11, fontWeight: FontWeight.w700)),
+              ]),
+            ),
+          ),
+          const SizedBox(width: 8),
+          // More / Less toggle
+          GestureDetector(
+            onTap: () => setState(() => _showPrices = !_showPrices),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: context.p.bg,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: context.p.border, width: 1.5),
+              ),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                Icon(_showPrices ? Icons.expand_less_rounded : Icons.expand_more_rounded,
+                    size: 13, color: context.p.text2),
+                const SizedBox(width: 4),
+                Text(_showPrices ? 'Less' : 'More',
+                    style: TextStyle(color: context.p.text2, fontSize: 11, fontWeight: FontWeight.w700)),
               ]),
             ),
           ),
