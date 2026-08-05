@@ -708,7 +708,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
                 border: Border.all(color: const Color(0xFF7C3AED).withValues(alpha: 0.4), width: 1.5),
               ),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text('✦ MỤC MỚI', style: TextStyle(fontSize: 10, color: const Color(0xFF7C3AED), fontWeight: FontWeight.w800, letterSpacing: 1)),
+                const Text('✦ MỤC MỚI', style: TextStyle(fontSize: 10, color: Color(0xFF7C3AED), fontWeight: FontWeight.w800, letterSpacing: 1)),
                 const SizedBox(height: 12),
                 FieldLabel(s.bangKeSeafood),
                 GestureDetector(
@@ -795,7 +795,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
             Container(
               padding: const EdgeInsets.symmetric(vertical: 48),
               child: Column(mainAxisSize: MainAxisSize.min, children: [
-                AppIcon(icon: Icons.list_alt_rounded, color: const Color(0xFF7C3AED), size: 64, iconSize: 30),
+                const AppIcon(icon: Icons.list_alt_rounded, color: Color(0xFF7C3AED), size: 64, iconSize: 30),
                 const SizedBox(height: 12),
                 Text(s.bangKeEmpty, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: context.p.textMain)),
                 const SizedBox(height: 6),
@@ -956,14 +956,14 @@ class _BangKeRowState extends State<_BangKeRow> {
         )),
         SizedBox(width: 70, child: Text(fmtK(item.total),
             textAlign: TextAlign.right,
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: const Color(0xFF7C3AED)))),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Color(0xFF7C3AED)))),
         const SizedBox(width: 4),
         if (_confirmDel)
           GestureDetector(
             onTap: widget.onDelete,
             child: Container(
               width: 24, height: 24,
-              decoration: BoxDecoration(color: const Color(0xFFDC2626), shape: BoxShape.circle),
+              decoration: const BoxDecoration(color: Color(0xFFDC2626), shape: BoxShape.circle),
               child: const Center(child: Icon(Icons.check, size: 13, color: Colors.white)),
             ),
           )
